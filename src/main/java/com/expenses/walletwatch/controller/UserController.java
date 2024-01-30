@@ -2,10 +2,9 @@ package com.expenses.walletwatch.controller;
 
 import com.expenses.walletwatch.dto.UserRegistrationDto;
 import com.expenses.walletwatch.service.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -18,7 +17,9 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public void registerUser(@RequestBody UserRegistrationDto dto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<String> registerUser(@RequestBody UserRegistrationDto dto) {
         userService.registerUser(dto);
+        return new ResponseEntity<>("User successfully created", HttpStatus.CREATED);
     };
 }
