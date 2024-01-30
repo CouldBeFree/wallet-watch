@@ -1,8 +1,11 @@
 package com.expenses.walletwatch.utils;
 
+import lombok.Data;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Data
 public class UserValidator {
     private String username;
     private String password;

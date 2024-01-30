@@ -8,6 +8,8 @@ import com.expenses.walletwatch.mapper.UserMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
+
 @Service
 public class UserService {
 
@@ -17,7 +19,7 @@ public class UserService {
         this.userDao = userDao;
     }
 
-    public void registerUser(UserRegistrationDto userRegistrationDto) {
+    public UserRegistrationDto registerUser(UserRegistrationDto userRegistrationDto) {
         User user = UserMapper.mapToUser(userRegistrationDto);
         try {
             user.validateUser();
@@ -28,5 +30,9 @@ public class UserService {
         if (isUserExist != null) {
             throw new BadRequest("Email or Username already exists");
         }
+        userDao.save(user);
+
+        User getUser = userDao.getUserByEmailAndUsername(user);
+        return new UserRegistrationDto(getUser.getId(), user.getEmail(), user.getUsername());
     }
 }
