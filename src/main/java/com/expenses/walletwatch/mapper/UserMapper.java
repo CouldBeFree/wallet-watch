@@ -5,6 +5,6 @@ import com.expenses.walletwatch.entity.User;
 
 public class UserMapper {
     public static User mapToUser(UserRegistrationDto dto) {
-        return new User(dto.getUsername(), dto.getPassword(), dto.getEmail(), null);
+        return new User(dto.getUsername(), dto.getPassword(), dto.getEmail(), dto.getId());
     }
 }
