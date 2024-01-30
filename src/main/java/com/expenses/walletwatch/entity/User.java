@@ -1,11 +1,10 @@
 package com.expenses.walletwatch.entity;
-
+import com.expenses.walletwatch.utils.UserValidator;
 import java.time.LocalDate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class User {
+public class User extends UserValidator {
     public User(String username, String password, String email, Long id) {
+        super(username, password, email);
         this.username = username;
         this.password = password;
         this.email = email;
@@ -50,19 +49,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    boolean validateEmail() {
-        String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-        Pattern pattern = Pattern.compile(EMAIL_PATTERN);
-        Matcher matcher = pattern.matcher(this.email);
-        return matcher.matches();
-    }
-
-    public void validateUser() throws RuntimeException {
-        if (!validateEmail()) {
-            throw new RuntimeException("Email is not valid");
-        }
     }
 
     @Override
