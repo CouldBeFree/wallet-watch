@@ -1,13 +1,16 @@
 package com.expenses.walletwatch.dao;
 
 import com.expenses.walletwatch.entity.User;
-import com.expenses.walletwatch.exception.BadRequest;
+import com.expenses.walletwatch.exception.ApiRequestException;
+import com.expenses.walletwatch.mapper.UserRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 
 @Repository
 public class UserDao {
@@ -19,20 +22,23 @@ public class UserDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void save(User user) {
+//    public int save(User user) throws RuntimeException {
+//        String sql = """
+//                INSERT INTO users(password, username, email)
+//                VALUES (?, ?, ?);
+//                """;
+//        return jdbcTemplate.update(sql, user.getPassword(), user.getUsername(), user.getEmail());
+//    }
+
+
+    public Object getUserByEmailAndUsername(User user) throws RuntimeException {
         String sql = """
-                INSERT INTO users(password, username, email)
-                VALUES (?, ?, ?);
+                select * from users
+                where email = ? or username = ?
                 """;
         try {
-            jdbcTemplate.update(sql, user.getPassword(), user.getUsername(), user.getEmail());
-        } catch (DataAccessException e) {
-            throw new BadRequest();
+            return jdbcTemplate.queryForObject(sql, new Object[]{user.getEmail(), user.getUsername()}, new BeanPropertyRowMapper(UserRowMapper.class));
         }
+        catch (EmptyResultDataAccessException ignore) {return null;}
     }
 }
-
-//TODO:
-// 1. Handle error types (duplicate key, not found)
-// 2. Create master class for handling all sql errors
-// 3. Pass errors to the master class
