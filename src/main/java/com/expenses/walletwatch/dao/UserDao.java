@@ -30,19 +30,15 @@ public class UserDao {
 //        return jdbcTemplate.update(sql, user.getPassword(), user.getUsername(), user.getEmail());
 //    }
 
-    public Object getUserByEmail(User user) throws RuntimeException {
-        String sql = """
-                select * from users
-                where email = ?
-                """;
-        return jdbcTemplate.queryForObject(sql, new Object[]{user.getEmail()}, new BeanPropertyRowMapper(UserRowMapper.class));
-    }
 
-    public Object getUserByUsername(User user) throws RuntimeException {
+    public Object getUserByEmailAndUsername(User user) throws RuntimeException {
         String sql = """
                 select * from users
-                where username = ?
+                where email = ? or username = ?
                 """;
-        return jdbcTemplate.queryForObject(sql, new Object[]{user.getUsername()}, new BeanPropertyRowMapper(UserRowMapper.class));
+        try {
+            return jdbcTemplate.queryForObject(sql, new Object[]{user.getEmail(), user.getUsername()}, new BeanPropertyRowMapper(UserRowMapper.class));
+        }
+        catch (EmptyResultDataAccessException ignore) {return null;}
     }
 }

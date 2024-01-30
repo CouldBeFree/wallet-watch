@@ -24,17 +24,9 @@ public class UserService {
         } catch (RuntimeException e) {
             throw new BadRequest(e.getMessage());
         }
-        try {
-            Object queryResult = userDao.getUserByEmail(user);
-            if (queryResult != null) {
-                throw new BadRequest("Email already exists");
-            }
-        } catch (EmptyResultDataAccessException ignore) {}
-        try {
-            Object userQueryResult = userDao.getUserByUsername(user);
-            if (userQueryResult != null) {
-                throw new BadRequest("Username already exists");
-            }
-        } catch (EmptyResultDataAccessException ignore) {}
-    };
+        Object isUserExist = userDao.getUserByEmailAndUsername(user);
+        if (isUserExist != null) {
+            throw new BadRequest("Email or Username already exists");
+        }
+    }
 }
