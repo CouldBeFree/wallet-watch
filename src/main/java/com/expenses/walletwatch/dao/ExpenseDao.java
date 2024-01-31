@@ -28,4 +28,31 @@ public class ExpenseDao {
         }
         catch (EmptyResultDataAccessException ignore) {return null;}
     }
+
+    public List<Expense> getUsersExpenses(int userId) {
+        String sql = """
+                select expenses_category.id, expenses_category_name from user_expenses_category
+                left outer join expenses_category
+                on user_expenses_category.expense_category_id = expenses_category.id
+                where user_id = ?
+                """;
+        try {
+            List<Expense> expenses = jdbcTemplate.query(sql, new ExpenseRowMapper(), userId);
+            return expenses;
+        }
+        catch (EmptyResultDataAccessException ignore) {return null;}
+    }
+
+    public List<Expense> addUserExpense(int userId, int expenseId) {
+        String sql = """
+                insert into user_expenses_category(user_id, expense_category_id)
+                values(?, ?);
+                """;
+        try {
+            jdbcTemplate.update(sql, userId, expenseId);
+            List<Expense> expenses = getUsersExpenses(userId);
+            return expenses;
+        }
+        catch (EmptyResultDataAccessException ignore) {return null;}
+    }
 }

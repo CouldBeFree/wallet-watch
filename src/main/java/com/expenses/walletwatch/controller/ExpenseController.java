@@ -1,13 +1,11 @@
 package com.expenses.walletwatch.controller;
 
+import com.expenses.walletwatch.dto.ExpenseRequestDto;
 import com.expenses.walletwatch.entity.Expense;
 import com.expenses.walletwatch.service.ExpenseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,9 +18,15 @@ public class ExpenseController {
         this.expenseService = expenseService;
     }
 
-    @GetMapping("/expense")
+    @GetMapping("/expenses")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<Expense>> getExpenses() {
         return new ResponseEntity<>(expenseService.getExpensesCategories(), HttpStatus.OK);
+    }
+
+    @PostMapping("/expenses/add")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<List<Expense>> addExpense(@RequestBody ExpenseRequestDto dto) {
+        return new ResponseEntity<>(expenseService.getUserExpensesCategories(dto), HttpStatus.CREATED);
     }
 }

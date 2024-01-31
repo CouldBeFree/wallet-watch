@@ -5,10 +5,7 @@ import com.expenses.walletwatch.dto.UserRegistrationDto;
 import com.expenses.walletwatch.entity.User;
 import com.expenses.walletwatch.exception.BadRequest;
 import com.expenses.walletwatch.mapper.UserMapper;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-
-import java.lang.reflect.Array;
 
 @Service
 public class UserService {
