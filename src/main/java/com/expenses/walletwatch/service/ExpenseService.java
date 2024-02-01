@@ -22,14 +22,27 @@ public class ExpenseService {
         return expenseDao.getExpensesCategory();
     }
 
-    public List<Expense> getUserExpensesCategories(ExpenseRequestDto dto) {
+    public List<Expense> createUserExpense(ExpenseRequestDto dto) {
         try {
-            //TODO: replace user_id with id from token
+            // TODO: replace user_id with id from token
             return expenseDao.addUserExpense(36, dto.getExpense_id());
         } catch (DuplicateKeyException e) {
             throw new BadRequest("Category already added");
         } catch (DataIntegrityViolationException e) {
             throw new BadRequest("Expense category does not exists");
         }
+    }
+
+    public List<Expense> deleteUserExpense(ExpenseRequestDto dto) {
+        try {
+            // TODO: replace user_id with id from token
+            return expenseDao.removeUserExpense(36, dto.getExpense_id());
+        } catch (RuntimeException e) {
+            throw new BadRequest("Something went wrong");
+        }
+    }
+
+    public List<Expense> getAllUsersExpenses() {
+        return expenseDao.getUsersExpenses(36);
     }
 }

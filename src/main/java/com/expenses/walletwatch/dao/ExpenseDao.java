@@ -50,8 +50,19 @@ public class ExpenseDao {
                 """;
         try {
             jdbcTemplate.update(sql, userId, expenseId);
-            List<Expense> expenses = getUsersExpenses(userId);
-            return expenses;
+            return getUsersExpenses(userId);
+        }
+        catch (EmptyResultDataAccessException ignore) {return null;}
+    }
+
+    public List<Expense> removeUserExpense(int userId, int expenseId) {
+        String sql = """
+               delete from user_expenses_category
+               where user_id = ? and expense_category_id = ?
+               """;
+        try {
+            jdbcTemplate.update(sql, userId, expenseId);
+            return getUsersExpenses(userId);
         }
         catch (EmptyResultDataAccessException ignore) {return null;}
     }
