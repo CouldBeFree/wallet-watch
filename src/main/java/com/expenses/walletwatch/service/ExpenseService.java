@@ -4,6 +4,7 @@ import com.expenses.walletwatch.dao.ExpenseDao;
 import com.expenses.walletwatch.dto.ExpenseRequestDto;
 import com.expenses.walletwatch.entity.Expense;
 import com.expenses.walletwatch.exception.BadRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,8 @@ public class ExpenseService {
             return expenseDao.addUserExpense(36, dto.getExpense_id());
         } catch (DuplicateKeyException e) {
             throw new BadRequest("Category already added");
+        } catch (DataIntegrityViolationException e) {
+            throw new BadRequest("Expense category does not exists");
         }
     }
 }
