@@ -2,7 +2,7 @@ package com.expenses.walletwatch.service;
 
 import com.expenses.walletwatch.dao.UserDao;
 import com.expenses.walletwatch.dto.UserRegistrationDto;
-import com.expenses.walletwatch.entity.User;
+import com.expenses.walletwatch.entity.UserEntity;
 import com.expenses.walletwatch.exception.BadRequest;
 import com.expenses.walletwatch.mapper.UserMapper;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class UserService {
     }
 
     public UserRegistrationDto registerUser(UserRegistrationDto userRegistrationDto) {
-        User user = UserMapper.mapToUser(userRegistrationDto);
+        UserEntity user = UserMapper.mapToUser(userRegistrationDto);
         try {
             user.validateUser();
         } catch (RuntimeException e) {
@@ -29,7 +29,7 @@ public class UserService {
         }
         userDao.save(user);
 
-        User getUser = userDao.getUserByEmailAndUsername(user);
+        UserEntity getUser = userDao.getUserByEmailAndUsername(user);
         return new UserRegistrationDto(getUser.getId(), user.getEmail(), user.getUsername());
     }
 }

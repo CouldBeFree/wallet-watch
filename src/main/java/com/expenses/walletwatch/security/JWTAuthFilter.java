@@ -22,8 +22,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
     private CustomUserDetailsService customUserDetailsService;
 
     @Override
-    protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request,
-                                    HttpServletResponse response,
+    protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String token = getJWTFromRequest((HttpServletRequest) request);
         if(StringUtils.hasText(token) && tokenGenerator.validateToken(token)) {
