@@ -38,10 +38,19 @@ public class UserDao {
     }
     public User getUserByUsername(String username) throws RuntimeException {
         String sql = """
-                SELECT id, username, mail
+                SELECT id, username, email
                 FROM users
                 WHERE username = ?
                 """;
         return jdbcTemplate.queryForObject(sql, new UserRowMapper(), username);
+    }
+
+    public User getUserByEmail(String email) throws RuntimeException {
+        String sql = """
+                SELECT id, username, email, password
+                FROM users
+                WHERE email = ?
+                """;
+        return jdbcTemplate.queryForObject(sql, new UserRowMapper(), email);
     }
 }
