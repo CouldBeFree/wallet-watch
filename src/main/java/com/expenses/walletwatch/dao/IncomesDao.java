@@ -1,8 +1,6 @@
 package com.expenses.walletwatch.dao;
 
-import com.expenses.walletwatch.entity.Expense;
 import com.expenses.walletwatch.entity.Income;
-import com.expenses.walletwatch.mapper.ExpenseRowMapper;
 import com.expenses.walletwatch.mapper.IncomeRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -55,5 +53,16 @@ public class IncomesDao {
             return incomes;
         }
         catch (EmptyResultDataAccessException ignore) {return null;}
+    }
+
+    public List<Income> removeUserIncome(int userId, int incomeId) {
+        String sql = """
+               delete from user_incomes_category
+               where user_id = ? and income_category_id = ?
+               """;
+        try {
+            jdbcTemplate.update(sql, userId, incomeId);
+            return getUsersIncomes(userId);
+        } catch (EmptyResultDataAccessException ignore) {return null;}
     }
 }

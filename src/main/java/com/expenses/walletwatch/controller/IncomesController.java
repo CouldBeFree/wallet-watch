@@ -29,4 +29,16 @@ public class IncomesController {
     public ResponseEntity<List<Income>> addIncome(@RequestBody IncomeRequestDto dto) {
         return new ResponseEntity<>(incomeService.createUserIncome(dto), HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/incomes/remove")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<Income>> removeIncome(@RequestBody IncomeRequestDto dto) {
+        return new ResponseEntity<>(incomeService.removeUserIncome(dto), HttpStatus.OK);
+    }
+
+    @GetMapping("incomes/all")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<Income>> getAllIncomes() {
+        return new ResponseEntity<>(incomeService.getAllUserIncomes(), HttpStatus.OK);
+    }
 }

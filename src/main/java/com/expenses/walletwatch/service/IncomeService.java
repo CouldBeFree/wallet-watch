@@ -32,4 +32,16 @@ public class IncomeService {
             throw new BadRequest("Expense category does not exists");
         }
     }
+
+    public List<Income> removeUserIncome(IncomeRequestDto dto) {
+        try {
+            return incomeDao.removeUserIncome(6, dto.getIncome_id());
+        } catch (RuntimeException e) {
+            throw new BadRequest("Something went wrong");
+        }
+    }
+
+    public List<Income> getAllUserIncomes() {
+        return incomeDao.getUsersIncomes(6);
+    }
 }
