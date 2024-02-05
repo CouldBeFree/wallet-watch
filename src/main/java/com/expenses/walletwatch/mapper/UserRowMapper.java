@@ -1,15 +1,15 @@
 package com.expenses.walletwatch.mapper;
 
-import com.expenses.walletwatch.entity.User;
+import com.expenses.walletwatch.entity.UserEntity;
 import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserRowMapper implements RowMapper<User> {
+public class UserRowMapper implements RowMapper<UserEntity> {
 
     @Override
-    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-        User user = new User();
+    public UserEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+        UserEntity user = new UserEntity();
         user.setId(rs.getLong("id"));
         user.setUsername(rs.getString("username"));
         user.setPassword(rs.getString("password"));

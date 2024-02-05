@@ -1,6 +1,6 @@
 package com.expenses.walletwatch.dao;
 
-import com.expenses.walletwatch.entity.User;
+import com.expenses.walletwatch.entity.UserEntity;
 import com.expenses.walletwatch.mapper.UserRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -17,7 +17,7 @@ public class UserDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public int save(User user) throws RuntimeException {
+    public int save(UserEntity user) throws RuntimeException {
         String sql = """
                 INSERT INTO users(password, username, email)
                 VALUES (?, ?, ?);
@@ -26,7 +26,7 @@ public class UserDao {
     }
 
 
-    public User getUserByEmailAndUsername(User user) throws RuntimeException {
+    public UserEntity getUserByEmailAndUsername(UserEntity user) throws RuntimeException {
         String sql = """
                 select * from users
                 where email = ? or username = ?
@@ -36,12 +36,21 @@ public class UserDao {
         }
         catch (EmptyResultDataAccessException ignore) {return null;}
     }
-    public User getUserByUsername(String username) throws RuntimeException {
+    public UserEntity getUserByUsername(String username) throws RuntimeException {
         String sql = """
-                SELECT id, username, mail
+                SELECT id, username, email
                 FROM users
                 WHERE username = ?
                 """;
         return jdbcTemplate.queryForObject(sql, new UserRowMapper(), username);
+    }
+
+    public UserEntity getUserByEmail(String email) throws RuntimeException {
+        String sql = """
+                SELECT id, username, email, password
+                FROM users
+                WHERE email = ?
+                """;
+        return jdbcTemplate.queryForObject(sql, new UserRowMapper(), email);
     }
 }
