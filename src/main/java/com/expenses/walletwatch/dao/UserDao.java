@@ -38,7 +38,7 @@ public class UserDao {
     }
     public UserEntity getUserByUsername(String username) throws RuntimeException {
         String sql = """
-                SELECT id, username, mail
+                SELECT id, username, email, password
                 FROM users
                 WHERE username = ?
                 """;

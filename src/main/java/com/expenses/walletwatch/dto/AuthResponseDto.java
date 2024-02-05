@@ -8,6 +8,6 @@ public class AuthResponseDto {
     private String tokenType = "Bearer ";
 
     public AuthResponseDto(String accessToken) {
-        this.accessToken = accessToken;
+        this.accessToken = "Bearer " + accessToken;
     }
 }
