@@ -1,7 +1,7 @@
 package com.expenses.walletwatch.service;
 
 import com.expenses.walletwatch.dao.UserDao;
-import com.expenses.walletwatch.entity.User;
+import com.expenses.walletwatch.entity.UserEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,7 +20,7 @@ public class CustomDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.getUserByEmail(email);
+        UserEntity user = userRepository.getUserByEmail(email);
         List<String> roles = new ArrayList<>();
         roles.add("USER");
         UserDetails userDetails =
