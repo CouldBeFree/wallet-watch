@@ -12,10 +12,9 @@ public class OperationExpenseRowMapper implements RowMapper {
     public OperationExpense mapRow(ResultSet rs, int rowNum) throws SQLException {
         OperationExpense operationExpense = new OperationExpense();
         operationExpense.setId(rs.getLong("id"));
-        operationExpense.setExpense_category_id(rs.getString("expense_category_id"));
         operationExpense.setDate(rs.getString("date"));
+        operationExpense.setExpenses_category_name(rs.getString("expenses_category_name"));
         operationExpense.setAmount(rs.getInt("amount"));
-        operationExpense.setUser_id(rs.getInt("user_id"));
 
         return operationExpense;
     }

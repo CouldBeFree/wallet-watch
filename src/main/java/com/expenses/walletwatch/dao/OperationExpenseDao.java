@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -55,8 +56,10 @@ public class OperationExpenseDao {
 
     public OperationExpense getOperationExpenseById(int userId, Object id) {
         String sql = """
-                select * from user_transaction_expenses
-                where user_id = ? and id = ?
+                select user_transaction_expenses.id, amount, date, expenses_category_name from user_transaction_expenses
+                left outer join expenses_category
+                on user_transaction_expenses.expense_category_id = expenses_category.id
+                where user_id = ? and user_transaction_expenses.id = ?;
                 """;
         try {
             List<OperationExpense> data = jdbcTemplate.query(sql, new OperationExpenseRowMapper(), userId, id);
@@ -66,6 +69,19 @@ public class OperationExpenseDao {
             throw new BadRequest(e.getCause());
         }
     }
+
+    public boolean removeOperationExpense(int userId, int id) {
+        String sql = """
+               delete from user_transaction_expenses
+               where user_id = ? and id = ?
+               """;
+        try {
+            jdbcTemplate.update(sql,userId, id);
+            return true;
+        } catch (HttpClientErrorException.NotFound e) {
+            throw new BadRequest(e.getMessage());
+        }
+    };
 
     public List<OperationExpense> getOperationExpenses(int userId) {
         String sql = """

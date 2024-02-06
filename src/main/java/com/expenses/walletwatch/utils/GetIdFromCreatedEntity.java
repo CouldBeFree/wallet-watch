@@ -1,6 +1,5 @@
 package com.expenses.walletwatch.utils;
 
-import jakarta.annotation.Nullable;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 
 import java.util.List;
