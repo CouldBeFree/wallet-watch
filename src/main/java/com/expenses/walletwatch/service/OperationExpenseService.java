@@ -8,6 +8,7 @@ import com.expenses.walletwatch.exception.BadRequest;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,9 +19,15 @@ public class OperationExpenseService {
         this.expenseDao = expenseDao;
     }
 
-    public OperationExpense createOperationExpense(OperationExpenseRequestDto dto) {
+    public OperationExpenseResponseDto createOperationExpense(OperationExpenseRequestDto dto) {
         try {
-            return expenseDao.createOperationExpense(dto, 6);
+            OperationExpense operationExpense = expenseDao.createOperationExpense(dto, 6);
+            return new OperationExpenseResponseDto(
+                    operationExpense.getId(),
+                    operationExpense.getDate(),
+                    operationExpense.getExpenses_category_name(),
+                    operationExpense.getAmount()
+            );
         } catch (RuntimeException e) {
             throw new BadRequest(e.getCause());
         }
@@ -55,7 +62,19 @@ public class OperationExpenseService {
         );
     }
 
-    public List<OperationExpense> getAllOperationExpenses() {
-        return expenseDao.getAllOperationExpenses(6);
+    public List<OperationExpenseResponseDto> getAllOperationExpenses() {
+        List<OperationExpense> value = expenseDao.getAllOperationExpenses(6);
+        List<OperationExpenseResponseDto> operationExpenseResponseDtos = new ArrayList<>();
+        for (int i = 0; i < value.size(); i++) {
+            OperationExpense operationExpense = value.get(i);
+            OperationExpenseResponseDto operationExpenseRequestDto = new OperationExpenseResponseDto(
+                    operationExpense.getId(),
+                    operationExpense.getDate(),
+                    operationExpense.getExpenses_category_name(),
+                    operationExpense.getAmount()
+            );
+            operationExpenseResponseDtos.add(operationExpenseRequestDto);
+        }
+        return operationExpenseResponseDtos;
     }
 }
