@@ -7,6 +7,8 @@ import com.expenses.walletwatch.exception.BadRequest;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class OperationExpenseService {
     private final OperationExpenseDao expenseDao;
@@ -30,5 +32,9 @@ public class OperationExpenseService {
         } catch (EmptyResultDataAccessException e) {
             throw new BadRequest(e.getCause());
         }
+    }
+
+    public List<OperationExpense> getAllOperationExpenses() {
+        return expenseDao.getAllOperationExpenses(6);
     }
 }

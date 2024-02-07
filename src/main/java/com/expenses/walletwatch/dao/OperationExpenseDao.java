@@ -83,10 +83,13 @@ public class OperationExpenseDao {
         }
     };
 
-    public List<OperationExpense> getOperationExpenses(int userId) {
+    public List<OperationExpense> getAllOperationExpenses(int userId) {
         String sql = """
-                select * from user_transaction_expenses
+                select user_transaction_expenses.id, amount, date, expenses_category_name from user_transaction_expenses
+                left outer join expenses_category
+                on user_transaction_expenses.expense_category_id = expenses_category.id
                 where user_id = ?
+                order by id;
                 """;
         try {
             return jdbcTemplate.query(sql, new OperationExpenseRowMapper(), userId);
