@@ -45,6 +45,16 @@ public class OperationExpenseService {
         );
     }
 
+    public OperationExpenseResponseDto updateOperationExpense(OperationExpenseRequestDto dto, int expenseId) {
+        OperationExpense expense = expenseDao.updateOperationExpense(dto, 6, expenseId);
+        return new OperationExpenseResponseDto(
+                expense.getId(),
+                expense.getDate(),
+                expense.getExpenses_category_name(),
+                expense.getAmount()
+        );
+    }
+
     public List<OperationExpense> getAllOperationExpenses() {
         return expenseDao.getAllOperationExpenses(6);
     }

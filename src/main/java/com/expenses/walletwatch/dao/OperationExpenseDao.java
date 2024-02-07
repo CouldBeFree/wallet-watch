@@ -5,6 +5,7 @@ import com.expenses.walletwatch.entity.OperationExpense;
 import com.expenses.walletwatch.exception.BadRequest;
 import com.expenses.walletwatch.exception.NotFound;
 import com.expenses.walletwatch.mapper.OperationExpenseRowMapper;
+import com.expenses.walletwatch.mapper.OperationExpenseRowMapperID;
 import com.expenses.walletwatch.utils.DateFormatParser;
 import com.expenses.walletwatch.utils.GetIdFromCreatedEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,41 @@ public class OperationExpenseDao {
         } catch (EmptyResultDataAccessException ignore) {
             return null;
         }
+    }
+
+    public OperationExpense updateOperationExpense(OperationExpenseRequestDto dto, int userId, int expenseId) {
+        try {
+            getOperationExpenseById(userId, expenseId);
+            GeneratedKeyHolder holder = new GeneratedKeyHolder();
+            jdbcTemplate.update(new PreparedStatementCreator() {
+                @Override
+                public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+                    PreparedStatement statement = con.prepareStatement("update user_transaction_expenses set amount = ?, expense_category_id = ?, date = ? where id = ? and user_id = ?", Statement.RETURN_GENERATED_KEYS);
+                    statement.setDouble(1, dto.getAmount());
+                    statement.setLong(2, getExpenseCategoryIdByName(dto.getExpenses_category_name()));
+                    statement.setDate(3, DateFormatParser.ConvertDate(dto.getDate()));
+                    statement.setInt(4, expenseId);
+                    statement.setInt(5, userId);
+                    return statement;
+                }
+            }, holder);
+            Optional<Object> id = GetIdFromCreatedEntity.getId(holder);
+            if (id.isPresent()) {
+                return getOperationExpenseById(userId, id.get());
+            }
+            return null;
+        } catch (EmptyResultDataAccessException ignore) {
+            return null;
+        }
+    }
+
+    private Long getExpenseCategoryIdByName(String name) {
+        String sql = """
+               select id from expenses_category
+               where expenses_category_name = ?
+               """;
+        List<OperationExpense> operationExpenses = jdbcTemplate.query(sql, new OperationExpenseRowMapperID(), name);
+        return operationExpenses.get(0).getId();
     }
 
     public OperationExpense getOperationExpenseById(int userId, Object id) {

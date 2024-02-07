@@ -52,6 +52,12 @@ public class OperationController {
         return new ResponseEntity<>(operationExpenseResponseDtos, HttpStatus.OK);
     }
 
+    @PutMapping("/expense/{expenseId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<OperationExpenseResponseDto> updateOperationExpense(@RequestBody OperationExpenseRequestDto dto, @PathVariable int expenseId) {
+        return new ResponseEntity<>(operationExpenseService.updateOperationExpense(dto, expenseId), HttpStatus.OK);
+    }
+
     @GetMapping("/expense/{expenseId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<OperationExpenseResponseDto> getOperationExpenseById(@PathVariable int expenseId) {
