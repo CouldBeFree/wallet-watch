@@ -29,7 +29,7 @@ public class IncomeService {
         } catch (DuplicateKeyException e) {
             throw new BadRequest("Income already added");
         } catch (DataIntegrityViolationException e) {
-            throw new BadRequest("Expense category does not exists");
+            throw new BadRequest("Income category does not exists");
         }
     }
 

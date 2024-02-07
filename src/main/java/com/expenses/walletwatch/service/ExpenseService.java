@@ -25,7 +25,7 @@ public class ExpenseService {
     public List<Expense> createUserExpense(ExpenseRequestDto dto) {
         try {
             // TODO: replace user_id with id from token
-            return expenseDao.addUserExpense(36, dto.getExpense_id());
+            return expenseDao.addUserExpense(6, dto.getExpense_id());
         } catch (DuplicateKeyException e) {
             throw new BadRequest("Category already added");
         } catch (DataIntegrityViolationException e) {
@@ -36,13 +36,13 @@ public class ExpenseService {
     public List<Expense> deleteUserExpense(ExpenseRequestDto dto) {
         try {
             // TODO: replace user_id with id from token
-            return expenseDao.removeUserExpense(36, dto.getExpense_id());
+            return expenseDao.removeUserExpense(6, dto.getExpense_id());
         } catch (RuntimeException e) {
             throw new BadRequest("Something went wrong");
         }
     }
 
     public List<Expense> getAllUsersExpenses() {
-        return expenseDao.getUsersExpenses(36);
+        return expenseDao.getUsersExpenses(6);
     }
 }
