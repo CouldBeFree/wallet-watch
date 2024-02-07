@@ -3,6 +3,7 @@ package com.expenses.walletwatch.dao;
 import com.expenses.walletwatch.dto.OperationExpenseRequestDto;
 import com.expenses.walletwatch.entity.OperationExpense;
 import com.expenses.walletwatch.exception.BadRequest;
+import com.expenses.walletwatch.exception.NotFound;
 import com.expenses.walletwatch.mapper.OperationExpenseRowMapper;
 import com.expenses.walletwatch.utils.DateFormatParser;
 import com.expenses.walletwatch.utils.GetIdFromCreatedEntity;
@@ -63,6 +64,10 @@ public class OperationExpenseDao {
                 """;
         try {
             List<OperationExpense> data = jdbcTemplate.query(sql, new OperationExpenseRowMapper(), userId, id);
+            if (data.size() == 0) {
+                String notFoundMessage = "Expense " + id + " not found";
+                throw new NotFound(notFoundMessage);
+            }
             return data.get(0);
         } catch (EmptyResultDataAccessException e) {
             //TODO: update to NotFound

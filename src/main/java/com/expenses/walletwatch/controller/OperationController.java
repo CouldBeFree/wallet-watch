@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/operation/expense")
+@RequestMapping("/api/operation")
 public class OperationController {
 
     private final OperationExpenseService operationExpenseService;
@@ -21,7 +21,7 @@ public class OperationController {
         this.operationExpenseService = operationExpenseService;
     }
 
-    @PostMapping("")
+    @PostMapping("/expense")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<OperationExpenseResponseDto> createOperationExpense(@RequestBody OperationExpenseRequestDto dto) {
         OperationExpense operationExpense = operationExpenseService.createOperationExpense(dto);
@@ -34,7 +34,7 @@ public class OperationController {
         return new ResponseEntity<>(operationExpenseRequestDto, HttpStatus.CREATED);
     }
 
-    @GetMapping("")
+    @GetMapping("/expense")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<OperationExpenseResponseDto>> getAllOperationsExpenses() {
         List<OperationExpense> value = operationExpenseService.getAllOperationExpenses();
@@ -52,9 +52,15 @@ public class OperationController {
         return new ResponseEntity<>(operationExpenseResponseDtos, HttpStatus.OK);
     }
 
-    @DeleteMapping("")
+    @GetMapping("/expense/{expenseId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> removeOperationExpense(@RequestBody OperationExpenseRequestDto dto) {
-        return new ResponseEntity<>(operationExpenseService.removeOperationExpense(dto), HttpStatus.OK);
+    public ResponseEntity<OperationExpenseResponseDto> getOperationExpenseById(@PathVariable int expenseId) {
+        return new ResponseEntity<>(operationExpenseService.getOperationExpenseById(expenseId), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/expense/{expenseId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<String> removeOperationExpense(@PathVariable int expenseId) {
+        return new ResponseEntity<>(operationExpenseService.removeOperationExpense(expenseId), HttpStatus.OK);
     }
 }
