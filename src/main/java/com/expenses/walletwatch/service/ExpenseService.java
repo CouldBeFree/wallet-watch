@@ -36,10 +36,11 @@ public class ExpenseService {
         }
     }
 
-    public List<Expense> deleteUserExpense(ExpenseRequestDto dto) {
+    public String deleteUserExpense(int categoryId) {
         try {
             Long userId = getUserData.getUserIdFromToken();
-            return expenseDao.removeUserExpense(userId, dto.getExpense_id());
+            expenseDao.removeUserExpense(userId, categoryId);
+            return "Removed";
         } catch (RuntimeException e) {
             throw new BadRequest("Something went wrong");
         }

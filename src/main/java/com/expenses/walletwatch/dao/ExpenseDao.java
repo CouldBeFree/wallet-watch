@@ -44,6 +44,7 @@ public class ExpenseDao {
                 left outer join expenses_category
                 on user_expenses_category.expense_category_id = expenses_category.id
                 where user_id = ?
+                order by id
                 """;
         try {
             List<Expense> expenses = jdbcTemplate.query(sql, new ExpenseRowMapper(), userId);
@@ -90,14 +91,13 @@ public class ExpenseDao {
         return data.get(0);
     }
 
-    public List<Expense> removeUserExpense(Long userId, int expenseId) {
+    public Object removeUserExpense(Long userId, int expenseId) {
         String sql = """
                delete from user_expenses_category
                where user_id = ? and expense_category_id = ?
                """;
         try {
-            jdbcTemplate.update(sql, userId, expenseId);
-            return getUsersExpenses(userId);
+            return jdbcTemplate.update(sql, userId, expenseId);
         }
         catch (EmptyResultDataAccessException ignore) {return null;}
     }
