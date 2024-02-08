@@ -19,7 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 @RestController
-@RequestMapping("/api/user/")
+@RequestMapping("/api/auth")
 public class UserController {
 
     private final UserService userService;
