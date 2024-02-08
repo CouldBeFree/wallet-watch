@@ -1,11 +1,8 @@
 package com.expenses.walletwatch.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 import com.expenses.walletwatch.utils.UserValidator;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -13,6 +10,8 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
+@Getter
+@Setter
 public class UserEntity extends UserValidator {
     public UserEntity(String username, String password, String email, Long id) {
         super(username, password, email);
@@ -32,6 +31,10 @@ public class UserEntity extends UserValidator {
 
     public UserEntity(String email, String password) {
         this.password = password;
+        this.email = email;
+    }
+
+    public UserEntity(String email) {
         this.email = email;
     }
 }
