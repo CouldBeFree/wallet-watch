@@ -19,6 +19,8 @@ public class ExpenseService {
     private final GetUserData getUserData;
 
     public ExpenseService(ExpenseDao expenseDao, GetUserData getUserData) {
+        this.getUserData = getUserData;
+    public ExpenseService(ExpenseDao expenseDao, GetUserData getUserData) {
 
         this.expenseDao = expenseDao;
         this.getUserData = getUserData;
@@ -28,10 +30,10 @@ public class ExpenseService {
         return expenseDao.getExpensesCategory();
     }
 
-    public List<Expense> createUserExpense(ExpenseRequestDto dto) {
+    public Expense createUserExpense(ExpenseRequestDto dto) {
         try {
-            // TODO: replace user_id with id from token
-            return expenseDao.addUserExpense(6, dto.getExpense_id());
+            Long userId = getUserData.getUserIdFromToken();
+            return expenseDao.addUserExpense(userId, dto.getExpense_id());
         } catch (DuplicateKeyException e) {
             throw new BadRequest("Category already added");
         } catch (DataIntegrityViolationException e) {
@@ -39,17 +41,19 @@ public class ExpenseService {
         }
     }
 
-    public List<Expense> deleteUserExpense(ExpenseRequestDto dto) {
+    public String deleteUserExpense(int categoryId) {
         try {
-            // TODO: replace user_id with id from token
-            return expenseDao.removeUserExpense(6, dto.getExpense_id());
+            Long userId = getUserData.getUserIdFromToken();
+            expenseDao.removeUserExpense(userId, categoryId);
+            return "Removed";
         } catch (RuntimeException e) {
             throw new BadRequest("Something went wrong");
         }
     }
 
     public List<Expense> getAllUsersExpenses() {
-        return expenseDao.getUsersExpenses(6);
+        Long userId = getUserData.getUserIdFromToken();
+        return expenseDao.getUsersExpenses(userId);
     }
 
     public List<UserExpenseStatistic> userTransactionsStatisticForPeriod(Date startDate, Date endDate) {

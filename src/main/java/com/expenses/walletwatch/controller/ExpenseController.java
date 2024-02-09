@@ -27,6 +27,7 @@ public class ExpenseController {
             ExpensesTransactionsRequestDto expensesTransactionsRequestDto) {
 
         this.getUserData = getUserData;
+    public ExpenseController(ExpenseService expenseService, JwtUtil jwtUtil) {
         this.expenseService = expenseService;
         this.jwtUtil = jwtUtil;
         this.expensesTransactionsRequestDto = expensesTransactionsRequestDto;
@@ -39,19 +40,19 @@ public class ExpenseController {
         return new ResponseEntity<>(expenseService.getExpensesCategories(), HttpStatus.OK);
     }
 
-    @PostMapping("expenses/add")
+    @PostMapping("expenses")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<List<Expense>> addExpense(@RequestBody ExpenseRequestDto dto) {
+    public ResponseEntity<Expense> addExpense(@RequestBody ExpenseRequestDto dto) {
         return new ResponseEntity<>(expenseService.createUserExpense(dto), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("expenses/remove")
+    @DeleteMapping("expenses/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<Expense>> removeExpense(@RequestBody ExpenseRequestDto dto) {
-        return new ResponseEntity<>(expenseService.deleteUserExpense(dto), HttpStatus.OK);
+    public ResponseEntity<String> removeExpense(@PathVariable int categoryId) {
+        return new ResponseEntity<>(expenseService.deleteUserExpense(categoryId), HttpStatus.OK);
     }
 
-    @GetMapping("expenses/all")
+    @GetMapping("expenses/mine")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<Expense>> getAllUsersExpenses() {
         return new ResponseEntity<>(expenseService.getAllUsersExpenses(), HttpStatus.OK);
