@@ -2,7 +2,9 @@ package com.expenses.walletwatch.controller;
 
 import com.expenses.walletwatch.auth.JwtUtil;
 import com.expenses.walletwatch.dto.ExpenseRequestDto;
+import com.expenses.walletwatch.dto.ExpensesTransactionsRequestDto;
 import com.expenses.walletwatch.entity.Expense;
+import com.expenses.walletwatch.entity.UserExpenseStatistic;
 import com.expenses.walletwatch.service.ExpenseService;
 import com.expenses.walletwatch.utils.GetUserData;
 import org.springframework.http.HttpStatus;
@@ -15,13 +17,19 @@ import java.util.List;
 @RequestMapping("/api/")
 public class ExpenseController {
     private final ExpenseService expenseService;
+    private final ExpensesTransactionsRequestDto expensesTransactionsRequestDto;
     private JwtUtil jwtUtil;
     private final GetUserData getUserData;
-    public ExpenseController(ExpenseService expenseService, JwtUtil jwtUtil, GetUserData getUserData) {
+    public ExpenseController(
+            ExpenseService expenseService,
+            JwtUtil jwtUtil,
+            GetUserData getUserData,
+            ExpensesTransactionsRequestDto expensesTransactionsRequestDto) {
 
         this.getUserData = getUserData;
         this.expenseService = expenseService;
         this.jwtUtil = jwtUtil;
+        this.expensesTransactionsRequestDto = expensesTransactionsRequestDto;
     }
 
     @GetMapping("expenses")
@@ -48,4 +56,28 @@ public class ExpenseController {
     public ResponseEntity<List<Expense>> getAllUsersExpenses() {
         return new ResponseEntity<>(expenseService.getAllUsersExpenses(), HttpStatus.OK);
     }
+
+    @GetMapping("expenses/user/statistic")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<UserExpenseStatistic>> getUserTransactionStatistic(
+            @RequestBody ExpensesTransactionsRequestDto userExpensesTransactionsDto
+    ){
+        return new ResponseEntity<>(expenseService.userTransactionsStatisticForPeriod(
+                userExpensesTransactionsDto.startDate,
+                userExpensesTransactionsDto.endDate
+        ), HttpStatus.OK);
+    }
+
+    @GetMapping("expenses/user/statistic/by-category")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<UserExpenseStatistic>> getUserTransactionStatisticByCategory(
+            @RequestBody ExpensesTransactionsRequestDto userExpensesTransactionsDto
+    ){
+        return new ResponseEntity<>(expenseService.userTransactionsStatisticByCategory(
+                userExpensesTransactionsDto.userCategoryId,
+                userExpensesTransactionsDto.startDate,
+                userExpensesTransactionsDto.endDate
+        ), HttpStatus.OK);
+    }
+
 }
