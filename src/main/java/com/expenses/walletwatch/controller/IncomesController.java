@@ -24,19 +24,19 @@ public class IncomesController {
         return new ResponseEntity<>(incomeService.getAllIncomes(), HttpStatus.OK);
     }
 
-    @PostMapping("/incomes/add")
+    @PostMapping("/incomes")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<List<Income>> addIncome(@RequestBody IncomeRequestDto dto) {
+    public ResponseEntity<Income> addIncome(@RequestBody IncomeRequestDto dto) {
         return new ResponseEntity<>(incomeService.createUserIncome(dto), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/incomes/remove")
+    @DeleteMapping("/incomes/{incomeId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<Income>> removeIncome(@RequestBody IncomeRequestDto dto) {
-        return new ResponseEntity<>(incomeService.removeUserIncome(dto), HttpStatus.OK);
+    public ResponseEntity<String> removeIncome(@PathVariable int incomeId) {
+        return new ResponseEntity<>(incomeService.removeUserIncome(incomeId), HttpStatus.OK);
     }
 
-    @GetMapping("incomes/all")
+    @GetMapping("incomes/mine")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<Income>> getAllIncomes() {
         return new ResponseEntity<>(incomeService.getAllUserIncomes(), HttpStatus.OK);
