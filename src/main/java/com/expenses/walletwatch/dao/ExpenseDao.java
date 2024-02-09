@@ -13,14 +13,11 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
+import java.util.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Repository
 public class ExpenseDao {
@@ -124,18 +121,10 @@ public class ExpenseDao {
 
     public List<UserExpenseStatistic> getUsersExpensesTransactionStatisticByCategory(
             Long userId, Date startDate, Date endDate, List<Integer> categoryId){
-//        TODO: this solution doesn't't work userCategoryId should be integers like (1,2,3) now its string;
-        StringBuilder sb = new StringBuilder();
-        for (Integer id : categoryId) {
-            if (Objects.equals(id, categoryId.get(categoryId.size() - 1))){
-                sb.append(id);
-            }
-            else {
-            sb.append(id).append(",");
-        }}
-        String userCategoryId = sb.toString();
-        System.out.print(userCategoryId);
-        String request = """
+        String inSql = String.join(", ", Collections.nCopies(categoryId.size(), "?"));
+        int[] categoryIdsArray = categoryId.stream().mapToInt(Integer::intValue).toArray();
+
+        String request = String.format("""
                 SELECT amount, expenses_category.expenses_category_name
                 FROM user_transaction_expenses
                 JOIN user_expenses_category
@@ -143,11 +132,14 @@ public class ExpenseDao {
                 JOIN expenses_category
                 ON user_expenses_category.expense_category_id = expenses_category.id
                 WHERE user_transaction_expenses.user_id = ?
-                    AND user_transaction_expenses.expense_category_id in (?)
+                    AND user_transaction_expenses.expense_category_id in (%s)
                     AND date between ? and ?
-                """;
+                """, inSql);
         try {
-            return (List<UserExpenseStatistic>) jdbcTemplate.query(request, new UserExpensesStatisticMapper(), userId, userCategoryId, startDate, endDate);
+            return (List<UserExpenseStatistic>) jdbcTemplate.query
+                    (request,
+                    new UserExpensesStatisticMapper(), userId, categoryIdsArray, startDate, endDate
+                    );
         }
         catch (EmptyResultDataAccessException ignore) {return null;}
     }
