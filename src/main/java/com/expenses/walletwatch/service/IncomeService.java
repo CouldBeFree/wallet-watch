@@ -4,6 +4,7 @@ import com.expenses.walletwatch.dao.IncomesDao;
 import com.expenses.walletwatch.dto.IncomeRequestDto;
 import com.expenses.walletwatch.entity.Income;
 import com.expenses.walletwatch.exception.BadRequest;
+import com.expenses.walletwatch.utils.GetUserData;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -13,8 +14,10 @@ import java.util.List;
 @Service
 public class IncomeService {
     private final IncomesDao incomeDao;
+    private final GetUserData getUserData;
 
-    public IncomeService(IncomesDao incomeDao) {
+    public IncomeService(IncomesDao incomeDao, GetUserData getUserData) {
+        this.getUserData = getUserData;
         this.incomeDao = incomeDao;
     }
 
@@ -22,10 +25,10 @@ public class IncomeService {
         return incomeDao.getIncomesCategory();
     }
 
-    public List<Income> createUserIncome(IncomeRequestDto dto) {
+    public Income createUserIncome(IncomeRequestDto dto) {
         try {
-            // TODO: replace user_id with id from token
-            return incomeDao.addUserIncome(6, dto.getIncome_id());
+            Long userId = getUserData.getUserIdFromToken();
+            return incomeDao.addUserIncome(userId, dto.getIncome_id());
         } catch (DuplicateKeyException e) {
             throw new BadRequest("Income already added");
         } catch (DataIntegrityViolationException e) {
@@ -33,15 +36,18 @@ public class IncomeService {
         }
     }
 
-    public List<Income> removeUserIncome(IncomeRequestDto dto) {
+    public String removeUserIncome(int incomeId) {
+        Long userId = getUserData.getUserIdFromToken();
         try {
-            return incomeDao.removeUserIncome(6, dto.getIncome_id());
+            incomeDao.removeUserIncome(userId, incomeId);
+            return "Income removed";
         } catch (RuntimeException e) {
             throw new BadRequest("Something went wrong");
         }
     }
 
     public List<Income> getAllUserIncomes() {
-        return incomeDao.getUsersIncomes(6);
+        Long userId = getUserData.getUserIdFromToken();
+        return incomeDao.getUsersIncomes(userId);
     }
 }
