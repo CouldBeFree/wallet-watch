@@ -3,12 +3,14 @@ package com.expenses.walletwatch.service;
 import com.expenses.walletwatch.dao.ExpenseDao;
 import com.expenses.walletwatch.dto.ExpenseRequestDto;
 import com.expenses.walletwatch.entity.Expense;
+import com.expenses.walletwatch.entity.UserExpenseStatistic;
 import com.expenses.walletwatch.exception.BadRequest;
 import com.expenses.walletwatch.utils.GetUserData;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -17,8 +19,9 @@ public class ExpenseService {
     private final GetUserData getUserData;
 
     public ExpenseService(ExpenseDao expenseDao, GetUserData getUserData) {
-        this.getUserData = getUserData;
+
         this.expenseDao = expenseDao;
+        this.getUserData = getUserData;
     }
 
     public List<Expense> getExpensesCategories() {
@@ -50,4 +53,15 @@ public class ExpenseService {
         Long userId = getUserData.getUserIdFromToken();
         return expenseDao.getUsersExpenses(userId);
     }
+
+    public List<UserExpenseStatistic> userTransactionsStatisticForPeriod(Date startDate, Date endDate) {
+        Long userId = getUserData.getUserIdFromToken();
+        return expenseDao.getUsersExpensesTransactionStatisticByPeriod(userId, startDate, endDate);
+    }
+
+    public List<UserExpenseStatistic> userTransactionsStatisticByCategory(List<Integer> categoryId, Date startDate, Date endDate){
+        Long userId = getUserData.getUserIdFromToken();
+        return expenseDao.getUsersExpensesTransactionStatisticByCategory(userId, startDate, endDate, categoryId);
+    }
+
 }
