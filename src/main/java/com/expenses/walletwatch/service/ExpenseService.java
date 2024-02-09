@@ -19,8 +19,6 @@ public class ExpenseService {
     private final GetUserData getUserData;
 
     public ExpenseService(ExpenseDao expenseDao, GetUserData getUserData) {
-        this.getUserData = getUserData;
-    public ExpenseService(ExpenseDao expenseDao, GetUserData getUserData) {
 
         this.expenseDao = expenseDao;
         this.getUserData = getUserData;

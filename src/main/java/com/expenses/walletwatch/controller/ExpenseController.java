@@ -20,17 +20,15 @@ public class ExpenseController {
     private final ExpensesTransactionsRequestDto expensesTransactionsRequestDto;
     private JwtUtil jwtUtil;
     private final GetUserData getUserData;
-    public ExpenseController(
-            ExpenseService expenseService,
-            JwtUtil jwtUtil,
-            GetUserData getUserData,
-            ExpensesTransactionsRequestDto expensesTransactionsRequestDto) {
-
-        this.getUserData = getUserData;
-    public ExpenseController(ExpenseService expenseService, JwtUtil jwtUtil) {
+    public ExpenseController(ExpenseService expenseService,
+                             JwtUtil jwtUtil,
+                             ExpensesTransactionsRequestDto expensesTransactionsRequestDto,
+                             GetUserData getUserData)
+    {
         this.expenseService = expenseService;
         this.jwtUtil = jwtUtil;
         this.expensesTransactionsRequestDto = expensesTransactionsRequestDto;
+        this.getUserData = getUserData;
     }
 
     @GetMapping("expenses")
