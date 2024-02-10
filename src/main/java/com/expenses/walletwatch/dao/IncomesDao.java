@@ -77,7 +77,7 @@ public class IncomesDao {
 
     public List<Income> getUsersIncomes(Long userId) {
         String sql = """
-                select incomes_category.id, incomes_category_name, user_id from user_incomes_category
+                select user_incomes_category.id, incomes_category_name, user_id from user_incomes_category
                 left outer join incomes_category
                 on user_incomes_category.income_category_id = incomes_category.id
                 where user_id = ?;
@@ -92,7 +92,7 @@ public class IncomesDao {
     public Object removeUserIncome(Long userId, int incomeId) {
         String sql = """
                delete from user_incomes_category
-               where user_id = ? and income_category_id = ?
+               where user_id = ? and id = ?
                """;
         try {
             return jdbcTemplate.update(sql, userId, incomeId);
