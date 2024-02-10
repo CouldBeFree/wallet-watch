@@ -34,7 +34,6 @@ public class ExpenseController {
     @GetMapping("expenses")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<Expense>> getExpenses() {
-        Long user_id = getUserData.getUserIdFromToken();
         return new ResponseEntity<>(expenseService.getExpensesCategories(), HttpStatus.OK);
     }
 

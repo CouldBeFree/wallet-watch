@@ -3,6 +3,7 @@ package com.expenses.walletwatch.controller;
 import com.expenses.walletwatch.auth.JwtUtil;
 import com.expenses.walletwatch.dto.LoginReqDto;
 import com.expenses.walletwatch.dto.UserRegistrationDto;
+import com.expenses.walletwatch.dto.UserResponseDto;
 import com.expenses.walletwatch.entity.UserEntity;
 import com.expenses.walletwatch.service.UserService;
 import org.springframework.http.HttpHeaders;
@@ -32,6 +33,12 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
+    }
+
+    @GetMapping("/getMe")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<UserResponseDto> getLoggedInUser() {
+        return new ResponseEntity<>(userService.getLoggedInUser(), HttpStatus.OK);
     }
 
     @PostMapping("register")
