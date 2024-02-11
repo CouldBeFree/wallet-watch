@@ -32,7 +32,7 @@ public class OperationExpenseDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public OperationExpense createOperationExpense(OperationExpenseRequestDto dto, int userId) {
+    public OperationExpense createOperationExpense(OperationExpenseRequestDto dto, Long userId) {
         try {
             GeneratedKeyHolder holder = new GeneratedKeyHolder();
             jdbcTemplate.update(new PreparedStatementCreator() {
@@ -40,7 +40,7 @@ public class OperationExpenseDao {
                 public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
                     PreparedStatement statement = con.prepareStatement("insert into user_transaction_expenses(amount, user_id, expense_category_id, date) values(?, ?, ?, ?) ", Statement.RETURN_GENERATED_KEYS);
                     statement.setDouble(1, dto.getAmount());
-                    statement.setInt(2, userId);
+                    statement.setLong(2, userId);
                     statement.setInt(3, dto.getExpense_category_id());
                     statement.setDate(4, DateFormatParser.ConvertDate(dto.getDate()));
                     return statement;
@@ -56,7 +56,7 @@ public class OperationExpenseDao {
         }
     }
 
-    public OperationExpense updateOperationExpense(OperationExpenseRequestDto dto, int userId, int expenseId) {
+    public OperationExpense updateOperationExpense(OperationExpenseRequestDto dto, Long userId, int expenseId) {
         try {
             getOperationExpenseById(userId, expenseId);
             GeneratedKeyHolder holder = new GeneratedKeyHolder();
@@ -68,7 +68,7 @@ public class OperationExpenseDao {
                     statement.setLong(2, getExpenseCategoryIdByName(dto.getExpenses_category_name()));
                     statement.setDate(3, DateFormatParser.ConvertDate(dto.getDate()));
                     statement.setInt(4, expenseId);
-                    statement.setInt(5, userId);
+                    statement.setLong(5, userId);
                     return statement;
                 }
             }, holder);
@@ -91,7 +91,7 @@ public class OperationExpenseDao {
         return operationExpenses.get(0).getId();
     }
 
-    public OperationExpense getOperationExpenseById(int userId, Object id) {
+    public OperationExpense getOperationExpenseById(Long userId, Object id) {
         String sql = """
                 select user_transaction_expenses.id, amount, date, expenses_category_name from user_transaction_expenses
                 left outer join expenses_category
@@ -111,7 +111,7 @@ public class OperationExpenseDao {
         }
     }
 
-    public boolean removeOperationExpense(int userId, int id) {
+    public boolean removeOperationExpense(Long userId, int id) {
         String sql = """
                delete from user_transaction_expenses
                where user_id = ? and id = ?
@@ -124,7 +124,7 @@ public class OperationExpenseDao {
         }
     };
 
-    public List<OperationExpense> getAllOperationExpenses(int userId) {
+    public List<OperationExpense> getAllOperationExpenses(Long userId) {
         String sql = """
                 select user_transaction_expenses.id, amount, date, expenses_category_name from user_transaction_expenses
                 left outer join expenses_category
