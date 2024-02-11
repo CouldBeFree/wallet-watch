@@ -2,6 +2,7 @@ package com.expenses.walletwatch.dao;
 
 import com.expenses.walletwatch.entity.Expense;
 import com.expenses.walletwatch.entity.UserExpenseStatistic;
+import com.expenses.walletwatch.exception.BadRequest;
 import com.expenses.walletwatch.exception.NotFound;
 import com.expenses.walletwatch.mapper.ExpenseRowMapper;
 import com.expenses.walletwatch.mapper.UserExpensesStatisticMapper;
@@ -13,11 +14,18 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import static com.expenses.walletwatch.utils.ExpensesQueryHandler.QUERY_OPERATION;
+import static com.expenses.walletwatch.utils.ExpensesQueryHandler.appendQuery;
+import static com.expenses.walletwatch.utils.TransformCollectionUtil.flat;
 
 @Repository
 public class ExpenseDao {
@@ -35,8 +43,9 @@ public class ExpenseDao {
         try {
             List<Expense> expenses = jdbcTemplate.query(sql, new ExpenseRowMapper());
             return expenses;
+        } catch (EmptyResultDataAccessException ignore) {
+            return null;
         }
-        catch (EmptyResultDataAccessException ignore) {return null;}
     }
 
     public List<Expense> getUsersExpenses(Long userId) {
@@ -50,8 +59,9 @@ public class ExpenseDao {
         try {
             List<Expense> expenses = jdbcTemplate.query(sql, new ExpenseRowMapper(), userId);
             return expenses;
+        } catch (EmptyResultDataAccessException ignore) {
+            return null;
         }
-        catch (EmptyResultDataAccessException ignore) {return null;}
     }
 
     public Expense addUserExpense(Long userId, int expenseId) {
@@ -68,7 +78,7 @@ public class ExpenseDao {
             }, holder);
             Optional<Object> id = GetIdFromCreatedEntity.getId(holder);
             if (id.isPresent()) {
-                 return getExpenseById(userId, id.get());
+                return getExpenseById(userId, id.get());
             }
             return null;
         } catch (EmptyResultDataAccessException ignore) {
@@ -78,12 +88,12 @@ public class ExpenseDao {
 
     public Expense getExpenseById(Long userID, Object id) {
         String sql = """
-                select user_expenses_category.id, expenses_category_name from user_expenses_category
-               left outer join expenses_category
-               on user_expenses_category.expense_category_id = expenses_category.id
-               where user_id = ? and user_expenses_category.id = ?
-               order by id
-               """;
+                 select user_expenses_category.id, expenses_category_name from user_expenses_category
+                left outer join expenses_category
+                on user_expenses_category.expense_category_id = expenses_category.id
+                where user_id = ? and user_expenses_category.id = ?
+                order by id
+                """;
         List<Expense> data = jdbcTemplate.query(sql, new ExpenseRowMapper(), userID, id);
         if (data.size() == 0) {
             String notFoundMessage = "Expense " + id + " not found";
@@ -94,16 +104,17 @@ public class ExpenseDao {
 
     public Object removeUserExpense(Long userId, int expenseId) {
         String sql = """
-               delete from user_expenses_category
-               where user_id = ? and id = ?
-               """;
+                delete from user_expenses_category
+                where user_id = ? and id = ?
+                """;
         try {
             return jdbcTemplate.update(sql, userId, expenseId);
+        } catch (EmptyResultDataAccessException ignore) {
+            return null;
         }
-        catch (EmptyResultDataAccessException ignore) {return null;}
     }
 
-    public List<UserExpenseStatistic> getUsersExpensesTransactionStatisticByPeriod(Long userId, Date startDate, Date endDate){
+    public List<UserExpenseStatistic> getUsersExpensesTransactionStatisticByPeriod(Long userId, Date startDate, Date endDate) {
         String request = """
                 SELECT amount, expenses_category.expenses_category_name
                 FROM user_transaction_expenses
@@ -115,32 +126,23 @@ public class ExpenseDao {
                 """;
         try {
             return (List<UserExpenseStatistic>) jdbcTemplate.query(request, new UserExpensesStatisticMapper(), userId, startDate, endDate);
+        } catch (EmptyResultDataAccessException ignore) {
+            return null;
         }
-        catch (EmptyResultDataAccessException ignore) {return null;}
     }
 
     public List<UserExpenseStatistic> getUsersExpensesTransactionStatisticByCategory(
-            Long userId, Date startDate, Date endDate, List<Integer> categoryId){
-        String inSql = String.join(", ", Collections.nCopies(categoryId.size(), "?"));
-        int[] categoryIdsArray = categoryId.stream().mapToInt(Integer::intValue).toArray();
+            Long userId, Date startDate, Date endDate, List<Integer> categoryId) {
+        String request = categoryId == null || categoryId.isEmpty()
+                ? QUERY_OPERATION
+                : String.format(appendQuery(), String.join(", ", Collections.nCopies(categoryId.size(), "?")));
 
-        String request = String.format("""
-                SELECT amount, expenses_category.expenses_category_name
-                FROM user_transaction_expenses
-                JOIN user_expenses_category
-                ON user_transaction_expenses.user_id = user_expenses_category.user_id
-                JOIN expenses_category
-                ON user_expenses_category.expense_category_id = expenses_category.id
-                WHERE user_transaction_expenses.user_id = ?
-                    AND user_transaction_expenses.expense_category_id in (%s)
-                    AND date between ? and ?
-                """, inSql);
         try {
             return (List<UserExpenseStatistic>) jdbcTemplate.query
                     (request,
-                    new UserExpensesStatisticMapper(), userId, categoryIdsArray, startDate, endDate
-                    );
+                            new UserExpensesStatisticMapper(), flat(List.of(List.of(userId, startDate, endDate), categoryId)));
+        } catch (RuntimeException e) {
+            throw new BadRequest(e.getCause());
         }
-        catch (EmptyResultDataAccessException ignore) {return null;}
     }
 }

@@ -5,6 +5,7 @@ import com.expenses.walletwatch.dto.OperationExpenseRequestDto;
 import com.expenses.walletwatch.dto.OperationExpenseResponseDto;
 import com.expenses.walletwatch.entity.OperationExpense;
 import com.expenses.walletwatch.exception.BadRequest;
+import com.expenses.walletwatch.utils.GetUserData;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +15,17 @@ import java.util.List;
 @Service
 public class OperationExpenseService {
     private final OperationExpenseDao expenseDao;
+    private final GetUserData getUserData;
 
-    public OperationExpenseService(OperationExpenseDao expenseDao) {
+    public OperationExpenseService(OperationExpenseDao expenseDao, GetUserData getUserData) {
         this.expenseDao = expenseDao;
+        this.getUserData = getUserData;
     }
 
     public OperationExpenseResponseDto createOperationExpense(OperationExpenseRequestDto dto) {
+        Long userId = getUserData.getUserIdFromToken();
         try {
-            OperationExpense operationExpense = expenseDao.createOperationExpense(dto, 6);
+            OperationExpense operationExpense = expenseDao.createOperationExpense(dto, userId);
             return new OperationExpenseResponseDto(
                     operationExpense.getId(),
                     operationExpense.getDate(),
@@ -34,8 +38,9 @@ public class OperationExpenseService {
     }
 
     public String removeOperationExpense(int expenseId) {
+        Long userId = getUserData.getUserIdFromToken();
         try {
-            expenseDao.removeOperationExpense(6, expenseId);
+            expenseDao.removeOperationExpense(userId, expenseId);
             return "Removed";
         } catch (EmptyResultDataAccessException e) {
             throw new BadRequest(e.getCause());
@@ -43,7 +48,8 @@ public class OperationExpenseService {
     }
     
     public OperationExpenseResponseDto getOperationExpenseById(int expenseId) {
-        OperationExpense expense = expenseDao.getOperationExpenseById(6, expenseId);
+        Long userId = getUserData.getUserIdFromToken();
+        OperationExpense expense = expenseDao.getOperationExpenseById(userId, expenseId);
         return new OperationExpenseResponseDto(
                 expense.getId(),
                 expense.getDate(),
@@ -53,7 +59,8 @@ public class OperationExpenseService {
     }
 
     public OperationExpenseResponseDto updateOperationExpense(OperationExpenseRequestDto dto, int expenseId) {
-        OperationExpense expense = expenseDao.updateOperationExpense(dto, 6, expenseId);
+        Long userId = getUserData.getUserIdFromToken();
+        OperationExpense expense = expenseDao.updateOperationExpense(dto, userId, expenseId);
         return new OperationExpenseResponseDto(
                 expense.getId(),
                 expense.getDate(),
@@ -63,7 +70,8 @@ public class OperationExpenseService {
     }
 
     public List<OperationExpenseResponseDto> getAllOperationExpenses() {
-        List<OperationExpense> value = expenseDao.getAllOperationExpenses(6);
+        Long userId = getUserData.getUserIdFromToken();
+        List<OperationExpense> value = expenseDao.getAllOperationExpenses(userId);
         List<OperationExpenseResponseDto> operationExpenseResponseDtos = new ArrayList<>();
         for (int i = 0; i < value.size(); i++) {
             OperationExpense operationExpense = value.get(i);
