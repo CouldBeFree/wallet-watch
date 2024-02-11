@@ -41,7 +41,7 @@ public class ExpenseDao {
 
     public List<Expense> getUsersExpenses(Long userId) {
         String sql = """
-                select expenses_category.id, expenses_category_name from user_expenses_category
+                select user_expenses_category.id, expenses_category_name from user_expenses_category
                 left outer join expenses_category
                 on user_expenses_category.expense_category_id = expenses_category.id
                 where user_id = ?
@@ -78,7 +78,7 @@ public class ExpenseDao {
 
     public Expense getExpenseById(Long userID, Object id) {
         String sql = """
-                select expenses_category.id, expenses_category_name from user_expenses_category
+                select user_expenses_category.id, expenses_category_name from user_expenses_category
                left outer join expenses_category
                on user_expenses_category.expense_category_id = expenses_category.id
                where user_id = ? and user_expenses_category.id = ?
@@ -95,7 +95,7 @@ public class ExpenseDao {
     public Object removeUserExpense(Long userId, int expenseId) {
         String sql = """
                delete from user_expenses_category
-               where user_id = ? and expense_category_id = ?
+               where user_id = ? and id = ?
                """;
         try {
             return jdbcTemplate.update(sql, userId, expenseId);

@@ -17,6 +17,14 @@ public class UserDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    public UserEntity getUserById(Long userId) {
+        String sql = """
+                select * from users
+                where id = ?
+                """;
+        return jdbcTemplate.queryForObject(sql, new UserRowMapper(), userId);
+    }
+
     public int save(UserEntity user) throws RuntimeException {
         String sql = """
                 INSERT INTO users(password, username, email)
