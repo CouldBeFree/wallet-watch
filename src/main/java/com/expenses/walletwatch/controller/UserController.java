@@ -21,7 +21,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 @RestController
-@CrossOrigin(origins = "*", allowedHeaders = {"Authorization", "Origin"}, exposedHeaders = HttpHeaders.AUTHORIZATION)
+@CrossOrigin(origins = "*", allowedHeaders = "*", exposedHeaders = HttpHeaders.AUTHORIZATION)
 @RequestMapping("/api/auth")
 public class UserController {
 
