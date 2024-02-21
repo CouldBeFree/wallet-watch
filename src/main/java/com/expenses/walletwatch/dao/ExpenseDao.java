@@ -116,13 +116,14 @@ public class ExpenseDao {
 
     public List<UserExpenseStatistic> getUsersExpensesTransactionStatisticByPeriod(Long userId, Date startDate, Date endDate) {
         String request = """
-                SELECT amount, expenses_category.expenses_category_name
+                SELECT SUM(amount), expenses_category.expenses_category_name
                 FROM user_transaction_expenses
                 JOIN user_expenses_category
                 ON user_transaction_expenses.user_id = user_expenses_category.user_id
                 JOIN expenses_category
                 ON user_expenses_category.expense_category_id = expenses_category.id
                 WHERE user_transaction_expenses.user_id = ? AND date between ? and ?
+                GROUP BY expenses_category.expenses_category_name
                 """;
         try {
             return (List<UserExpenseStatistic>) jdbcTemplate.query(request, new UserExpensesStatisticMapper(), userId, startDate, endDate);
