@@ -11,7 +11,8 @@ public class UserExpensesStatisticMapper implements RowMapper<UserExpenseStatist
     public UserExpenseStatistic mapRow(ResultSet rs, int rowNum) throws SQLException {
         UserExpenseStatistic userExpenseStatistic = new UserExpenseStatistic();
         userExpenseStatistic.setExpenses_category_name(rs.getString("expenses_category_name"));
-        userExpenseStatistic.setAmount_sum(rs.getFloat("amount"));
+        userExpenseStatistic.setAmount_sum(rs.getFloat("sum"));
+        userExpenseStatistic.setId(rs.getInt("expense_category_id"));
         return userExpenseStatistic;
     }
 }

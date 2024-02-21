@@ -11,10 +11,10 @@ public class ExpensesQueryHandler {
                 ON user_expenses_category.expense_category_id = expenses_category.id
                 WHERE user_transaction_expenses.user_id = ?
                     AND date between ? and ?
-                GROUP BY expenses_category.expenses_category_name, user_transaction_expenses.expense_category_id;
                 """;
     public static final String QUERY_OPERATION_EXTRA_CONDITION = """
                     AND user_transaction_expenses.expense_category_id in (%s)
+                    GROUP BY expenses_category.expenses_category_name, user_transaction_expenses.expense_category_id;
                 """;
 
     public static String appendQuery() {
