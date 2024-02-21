@@ -120,6 +120,7 @@ public class ExpenseDao {
                 FROM user_transaction_expenses
                 JOIN user_expenses_category
                 ON user_transaction_expenses.user_id = user_expenses_category.user_id
+                AND user_transaction_expenses.expense_category_id = user_expenses_category.id
                 JOIN expenses_category
                 ON user_expenses_category.expense_category_id = expenses_category.id
                 WHERE user_transaction_expenses.user_id = ? AND date between ? and ?
