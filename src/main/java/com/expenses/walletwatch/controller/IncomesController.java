@@ -1,7 +1,9 @@
 package com.expenses.walletwatch.controller;
 
 import com.expenses.walletwatch.dto.IncomeRequestDto;
+import com.expenses.walletwatch.dto.IncomesTransactionsRequestDto;
 import com.expenses.walletwatch.entity.Income;
+import com.expenses.walletwatch.entity.UserIncomeStatistic;
 import com.expenses.walletwatch.service.IncomeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,8 @@ import java.util.List;
 public class IncomesController {
     private final IncomeService incomeService;
 
-    public IncomesController(IncomeService incomeService) {
+    public IncomesController(IncomeService incomeService,
+                             IncomesTransactionsRequestDto incomesTransactionsRequestDto) {
         this.incomeService = incomeService;
     }
 
@@ -42,4 +45,28 @@ public class IncomesController {
     public ResponseEntity<List<Income>> getAllIncomes() {
         return new ResponseEntity<>(incomeService.getAllUserIncomes(), HttpStatus.OK);
     }
+
+    @GetMapping("incomes/user/statistic")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<UserIncomeStatistic>> getUserTransactionStatistic(
+            @RequestBody IncomesTransactionsRequestDto userExpensesTransactionsDto
+    ){
+        return new ResponseEntity<>(incomeService.userTransactionsStatisticForPeriod(
+                userExpensesTransactionsDto.startDate,
+                userExpensesTransactionsDto.endDate
+        ), HttpStatus.OK);
+    }
+
+    @GetMapping("incomes/user/statistic/by-category")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<UserIncomeStatistic>> getUserTransactionStatisticByCategory(
+            @RequestBody IncomesTransactionsRequestDto userExpensesTransactionsDto
+    ){
+        return new ResponseEntity<>(incomeService.userTransactionsStatisticByCategory(
+                userExpensesTransactionsDto.userIncomeCategoryId,
+                userExpensesTransactionsDto.startDate,
+                userExpensesTransactionsDto.endDate
+        ), HttpStatus.OK);
+    }
+
 }

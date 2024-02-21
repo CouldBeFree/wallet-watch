@@ -61,8 +61,7 @@ public class ExpenseService {
     }
 
     public List<UserExpenseStatistic> userTransactionsStatisticByCategory(List<Integer> categoryId, Date startDate, Date endDate){
-        //        TODO: add startDate and endDate validator, if startDate is empty need to get user registration date if endDate is empty - today date
-
+//        TODO: add startDate and endDate validator, if startDate is empty need to get user registration date if endDate is empty - today date
         Long userId = getUserData.getUserIdFromToken();
         return expenseDao.getUsersExpensesTransactionStatisticByCategory(userId, startDate, endDate, categoryId);
     }
