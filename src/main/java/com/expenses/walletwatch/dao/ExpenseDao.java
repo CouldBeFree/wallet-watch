@@ -96,7 +96,7 @@ public class ExpenseDao {
                 order by id
                 """;
         List<Expense> data = jdbcTemplate.query(sql, new ExpenseRowMapper(), userID, id);
-        if (data.size() == 0) {
+        if (data.isEmpty()) {
             String notFoundMessage = "Expense " + id + " not found";
             throw new NotFound(notFoundMessage);
         }
