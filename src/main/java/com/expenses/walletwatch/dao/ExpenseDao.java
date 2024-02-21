@@ -23,8 +23,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static com.expenses.walletwatch.utils.ExpensesQueryHandler.QUERY_OPERATION;
-import static com.expenses.walletwatch.utils.ExpensesQueryHandler.appendQuery;
+import static com.expenses.walletwatch.utils.handler.ExpensesByPeriodQueryHandler.GET_EXPENSES_BY_PERIOD;
+import static com.expenses.walletwatch.utils.handler.ExpensesByCategoryQueryHandler.QUERY_OPERATION;
+import static com.expenses.walletwatch.utils.handler.ExpensesByCategoryQueryHandler.appendQuery;
 import static com.expenses.walletwatch.utils.TransformCollectionUtil.flat;
 
 @Repository
@@ -115,19 +116,8 @@ public class ExpenseDao {
     }
 
     public List<UserExpenseStatistic> getUsersExpensesTransactionStatisticByPeriod(Long userId, Date startDate, Date endDate) {
-        String request = """
-                SELECT SUM(amount), user_transaction_expenses.expense_category_id, expenses_category.expenses_category_name
-                FROM user_transaction_expenses
-                JOIN user_expenses_category
-                ON user_transaction_expenses.user_id = user_expenses_category.user_id
-                AND user_transaction_expenses.expense_category_id = user_expenses_category.id
-                JOIN expenses_category
-                ON user_expenses_category.expense_category_id = expenses_category.id
-                WHERE user_transaction_expenses.user_id = ? AND date between ? and ?
-                GROUP BY expenses_category.expenses_category_name, user_transaction_expenses.expense_category_id
-                """;
         try {
-            return (List<UserExpenseStatistic>) jdbcTemplate.query(request, new UserExpensesStatisticMapper(), userId, startDate, endDate);
+            return (List<UserExpenseStatistic>) jdbcTemplate.query(GET_EXPENSES_BY_PERIOD, new UserExpensesStatisticMapper(), userId, startDate, endDate);
         } catch (EmptyResultDataAccessException ignore) {
             return null;
         }

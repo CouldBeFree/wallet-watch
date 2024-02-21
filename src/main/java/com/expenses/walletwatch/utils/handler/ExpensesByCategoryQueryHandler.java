@@ -1,6 +1,6 @@
-package com.expenses.walletwatch.utils;
+package com.expenses.walletwatch.utils.handler;
 
-public class ExpensesQueryHandler {
+public class ExpensesByCategoryQueryHandler {
     public static final String QUERY_OPERATION = """
                 SELECT SUM(amount), user_transaction_expenses.expense_category_id, expenses_category.expenses_category_name
                 FROM user_transaction_expenses
