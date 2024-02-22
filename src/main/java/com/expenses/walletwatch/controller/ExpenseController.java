@@ -18,18 +18,8 @@ import java.util.List;
 @RequestMapping("/api/")
 public class ExpenseController {
     private final ExpenseService expenseService;
-    private final ExpensesTransactionsRequestDto expensesTransactionsRequestDto;
-    private JwtUtil jwtUtil;
-    private final GetUserData getUserData;
-    public ExpenseController(ExpenseService expenseService,
-                             JwtUtil jwtUtil,
-                             ExpensesTransactionsRequestDto expensesTransactionsRequestDto,
-                             GetUserData getUserData)
-    {
+    public ExpenseController(ExpenseService expenseService) {
         this.expenseService = expenseService;
-        this.jwtUtil = jwtUtil;
-        this.expensesTransactionsRequestDto = expensesTransactionsRequestDto;
-        this.getUserData = getUserData;
     }
 
     @GetMapping("expenses")
