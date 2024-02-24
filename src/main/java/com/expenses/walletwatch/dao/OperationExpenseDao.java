@@ -126,10 +126,12 @@ public class OperationExpenseDao {
 
     public List<OperationExpense> getAllOperationExpenses(Long userId) {
         String sql = """
-                select user_transaction_expenses.id, amount, date, expenses_category_name from user_transaction_expenses
+                select user_transaction_expenses.id, amount, date, expenses_category.expenses_category_name from user_transaction_expenses
+                left outer join user_expenses_category
+                on user_transaction_expenses.expense_category_id = user_expenses_category.id
                 left outer join expenses_category
-                on user_transaction_expenses.expense_category_id = expenses_category.id
-                where user_id = ?
+                on user_expenses_category.expense_category_id = expenses_category.id
+                where user_expenses_category.user_id = ?
                 order by id;
                 """;
         try {
