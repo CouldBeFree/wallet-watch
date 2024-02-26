@@ -65,7 +65,7 @@ public class OperationExpenseDao {
                 public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
                     PreparedStatement statement = con.prepareStatement("update user_transaction_expenses set amount = ?, expense_category_id = ?, date = ? where id = ? and user_id = ?", Statement.RETURN_GENERATED_KEYS);
                     statement.setDouble(1, dto.getAmount());
-                    statement.setLong(2, getExpenseCategoryIdByName(dto.getExpenses_category_name()));
+                    statement.setLong(2, getExpenseCategoryIdByName(dto.getExpenses_category_name(), userId));
                     statement.setDate(3, DateFormatParser.ConvertDate(dto.getDate()));
                     statement.setInt(4, expenseId);
                     statement.setLong(5, userId);
@@ -77,17 +77,20 @@ public class OperationExpenseDao {
                 return getOperationExpenseById(userId, id.get());
             }
             return null;
-        } catch (EmptyResultDataAccessException ignore) {
+        } catch (RuntimeException e) {
             return null;
         }
     }
 
-    private Long getExpenseCategoryIdByName(String name) {
+    private Long getExpenseCategoryIdByName(String name, Long userId) {
         String sql = """
-               select id from expenses_category
-               where expenses_category_name = ?
+               select user_expenses_category.id from user_expenses_category
+               right outer join expenses_category
+               on user_expenses_category.expense_category_id = expenses_category.id
+               where expenses_category.expenses_category_name = ?
+               and user_id = ?;
                """;
-        List<OperationExpense> operationExpenses = jdbcTemplate.query(sql, new OperationExpenseRowMapperID(), name);
+        List<OperationExpense> operationExpenses = jdbcTemplate.query(sql, new OperationExpenseRowMapperID(), name, userId);
         return operationExpenses.get(0).getId();
     }
 
