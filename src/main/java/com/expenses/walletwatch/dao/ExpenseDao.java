@@ -54,7 +54,7 @@ public class ExpenseDao {
                 select user_expenses_category.id, expenses_category_name from user_expenses_category
                 left outer join expenses_category
                 on user_expenses_category.expense_category_id = expenses_category.id
-                where user_id = ?
+                where user_id = ? and is_active = true
                 order by id
                 """;
         try {
@@ -67,19 +67,34 @@ public class ExpenseDao {
 
     public Expense addUserExpense(Long userId, int expenseId) {
         try {
-            GeneratedKeyHolder holder = new GeneratedKeyHolder();
-            jdbcTemplate.update(new PreparedStatementCreator() {
-                @Override
-                public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-                    PreparedStatement statement = con.prepareStatement("insert into user_expenses_category(user_id, expense_category_id) values(?, ?) ", Statement.RETURN_GENERATED_KEYS);
-                    statement.setLong(1, userId);
-                    statement.setInt(2, expenseId);
-                    return statement;
+            int res = getExistingExpenseById(userId, expenseId);
+            if (res == 0) {
+                GeneratedKeyHolder holder = new GeneratedKeyHolder();
+                jdbcTemplate.update(new PreparedStatementCreator() {
+                    @Override
+                    public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+                        PreparedStatement statement = con.prepareStatement("insert into user_expenses_category(user_id, expense_category_id) values(?, ?) ", Statement.RETURN_GENERATED_KEYS);
+                        statement.setLong(1, userId);
+                        statement.setInt(2, expenseId);
+                        return statement;
+                    }
+                }, holder);
+                Optional<Object> id = GetIdFromCreatedEntity.getId(holder);
+                if (id.isPresent()) {
+                    return getExpenseById(userId, id.get());
                 }
-            }, holder);
-            Optional<Object> id = GetIdFromCreatedEntity.getId(holder);
-            if (id.isPresent()) {
-                return getExpenseById(userId, id.get());
+            } else {
+                try {
+                    String sql = """
+                        update user_expenses_category
+                        set is_active = true
+                        where user_id = ? and id = ?
+                        """;
+                    jdbcTemplate.update(sql, userId, res);
+                    return getExpenseById(userId, res);
+                } catch (RuntimeException e) {
+                    throw new BadRequest(e.getCause());
+                }
             }
             return null;
         } catch (EmptyResultDataAccessException ignore) {
@@ -87,9 +102,26 @@ public class ExpenseDao {
         }
     }
 
+    private int getExistingExpenseById(Long userID, Object id) {
+        String sql = """
+                select user_expenses_category.id, expenses_category_name, is_active from user_expenses_category
+                left outer join expenses_category
+                on user_expenses_category.expense_category_id = expenses_category.id
+                where user_id = ? and expense_category_id = ?
+                order by id;
+                """;
+        List<Expense> data = jdbcTemplate.query(sql, new ExpenseRowMapper(), userID, id);
+        System.out.println(data);
+        if (data.size() == 0) {
+            return 0;
+        } else {
+            return data.get(0).getId().intValue();
+        }
+    }
+
     public Expense getExpenseById(Long userID, Object id) {
         String sql = """
-                 select user_expenses_category.id, expenses_category_name from user_expenses_category
+                select user_expenses_category.id, expenses_category_name from user_expenses_category
                 left outer join expenses_category
                 on user_expenses_category.expense_category_id = expenses_category.id
                 where user_id = ? and user_expenses_category.id = ?
@@ -105,7 +137,8 @@ public class ExpenseDao {
 
     public Object removeUserExpense(Long userId, int expenseId) {
         String sql = """
-                delete from user_expenses_category
+                update user_expenses_category
+                set is_active = false
                 where user_id = ? and id = ?
                 """;
         try {
