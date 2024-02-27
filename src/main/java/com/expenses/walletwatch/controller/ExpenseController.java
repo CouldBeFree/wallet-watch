@@ -1,12 +1,10 @@
 package com.expenses.walletwatch.controller;
 
-import com.expenses.walletwatch.auth.JwtUtil;
 import com.expenses.walletwatch.dto.ExpenseRequestDto;
 import com.expenses.walletwatch.dto.ExpensesTransactionsRequestDto;
 import com.expenses.walletwatch.entity.Expense;
 import com.expenses.walletwatch.entity.UserExpenseStatistic;
 import com.expenses.walletwatch.service.ExpenseService;
-import com.expenses.walletwatch.utils.GetUserData;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +16,8 @@ import java.util.List;
 @RequestMapping("/api/")
 public class ExpenseController {
     private final ExpenseService expenseService;
-    public ExpenseController(ExpenseService expenseService) {
+    public ExpenseController(ExpenseService expenseService)
+    {
         this.expenseService = expenseService;
     }
 

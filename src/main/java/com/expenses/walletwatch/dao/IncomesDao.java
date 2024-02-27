@@ -1,8 +1,11 @@
 package com.expenses.walletwatch.dao;
 
 import com.expenses.walletwatch.entity.Income;
+import com.expenses.walletwatch.entity.UserIncomeStatistic;
+import com.expenses.walletwatch.exception.BadRequest;
 import com.expenses.walletwatch.exception.NotFound;
 import com.expenses.walletwatch.mapper.IncomeRowMapper;
+import com.expenses.walletwatch.mapper.UserIncomesStatisticMapper;
 import com.expenses.walletwatch.utils.GetIdFromCreatedEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -15,8 +18,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static com.expenses.walletwatch.utils.TransformCollectionUtil.flat;
+import static com.expenses.walletwatch.utils.handler.IncomesByCategoryQueryHandler.appendQuery;
+import static com.expenses.walletwatch.utils.handler.IncomesByCategoryQueryHandler.GET_INCOMES_BY_CATEGORY;
+import static com.expenses.walletwatch.utils.handler.IncomesByPeriodQueryHandler.GET_INCOMES_BY_PERIOD;
+
 
 @Repository
 public class IncomesDao {
@@ -97,5 +108,27 @@ public class IncomesDao {
         try {
             return jdbcTemplate.update(sql, userId, incomeId);
         } catch (EmptyResultDataAccessException ignore) {return null;}
+    }
+
+    public List<UserIncomeStatistic> getUsersIncomesTransactionStatisticByPeriod(Long userId, Date startDate, Date endDate) {
+        try {
+            return (List<UserIncomeStatistic>) jdbcTemplate.query(GET_INCOMES_BY_PERIOD, new UserIncomesStatisticMapper(), userId, startDate, endDate);
+        } catch (EmptyResultDataAccessException ignore) {
+            return null;
+        }
+    }
+
+    public List<UserIncomeStatistic> getUsersIncomesTransactionStatisticByCategory(Long userId, Date startDate, Date endDate, List<Integer> categoryId) {
+        String request = categoryId == null || categoryId.isEmpty()
+                ? GET_INCOMES_BY_CATEGORY
+                : String.format(appendQuery(), String.join(", ", Collections.nCopies(categoryId.size(), "?")));
+
+        try {
+            return (List<UserIncomeStatistic>) jdbcTemplate.query
+                    (request,
+                            new UserIncomesStatisticMapper(), flat(List.of(List.of(userId, startDate, endDate), categoryId)));
+        } catch (RuntimeException e) {
+            throw new BadRequest(e.getCause());
+        }
     }
 }

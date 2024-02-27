@@ -5,13 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserExpenseStatistic {
-    private String expenses_category_name;
+public class UserIncomeStatistic {
+    private String income_category_name;
     private Float amount_sum;
     private Integer id;
 }

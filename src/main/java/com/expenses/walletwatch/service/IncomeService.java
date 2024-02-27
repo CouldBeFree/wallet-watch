@@ -3,12 +3,15 @@ package com.expenses.walletwatch.service;
 import com.expenses.walletwatch.dao.IncomesDao;
 import com.expenses.walletwatch.dto.IncomeRequestDto;
 import com.expenses.walletwatch.entity.Income;
+import com.expenses.walletwatch.entity.UserIncomeStatistic;
 import com.expenses.walletwatch.exception.BadRequest;
 import com.expenses.walletwatch.utils.GetUserData;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -50,4 +53,15 @@ public class IncomeService {
         Long userId = getUserData.getUserIdFromToken();
         return incomeDao.getUsersIncomes(userId);
     }
+
+    public List<UserIncomeStatistic> userTransactionsStatisticForPeriod(Date startDate, Date endDate) {
+//  TODO: add startDate and endDate validator, if startDate is empty need to get user registration date if endDate is empty - today date
+        Long userId = getUserData.getUserIdFromToken();
+        return incomeDao.getUsersIncomesTransactionStatisticByPeriod(userId, startDate, endDate);
+    }
+
+    public List<UserIncomeStatistic> userTransactionsStatisticByCategory(ArrayList<Integer> userCategoryId, Date startDate, Date endDate) {
+//     TODO: add startDate and endDate validator, if startDate is empty need to get user registration date if endDate is empty - today date
+        Long userId = getUserData.getUserIdFromToken();
+        return incomeDao.getUsersIncomesTransactionStatisticByCategory(userId, startDate, endDate, userCategoryId);}
 }

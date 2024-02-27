@@ -23,8 +23,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static com.expenses.walletwatch.utils.ExpensesQueryHandler.QUERY_OPERATION;
-import static com.expenses.walletwatch.utils.ExpensesQueryHandler.appendQuery;
+import static com.expenses.walletwatch.utils.handler.ExpensesByPeriodQueryHandler.GET_EXPENSES_BY_PERIOD;
+import static com.expenses.walletwatch.utils.handler.ExpensesByCategoryQueryHandler.QUERY_OPERATION;
+import static com.expenses.walletwatch.utils.handler.ExpensesByCategoryQueryHandler.appendQuery;
 import static com.expenses.walletwatch.utils.TransformCollectionUtil.flat;
 
 @Repository
@@ -127,7 +128,7 @@ public class ExpenseDao {
                 order by id
                 """;
         List<Expense> data = jdbcTemplate.query(sql, new ExpenseRowMapper(), userID, id);
-        if (data.size() == 0) {
+        if (data.isEmpty()) {
             String notFoundMessage = "Expense " + id + " not found";
             throw new NotFound(notFoundMessage);
         }
@@ -148,17 +149,8 @@ public class ExpenseDao {
     }
 
     public List<UserExpenseStatistic> getUsersExpensesTransactionStatisticByPeriod(Long userId, Date startDate, Date endDate) {
-        String request = """
-                SELECT amount, expenses_category.expenses_category_name
-                FROM user_transaction_expenses
-                JOIN user_expenses_category
-                ON user_transaction_expenses.user_id = user_expenses_category.user_id
-                JOIN expenses_category
-                ON user_expenses_category.expense_category_id = expenses_category.id
-                WHERE user_transaction_expenses.user_id = ? AND date between ? and ?
-                """;
         try {
-            return (List<UserExpenseStatistic>) jdbcTemplate.query(request, new UserExpensesStatisticMapper(), userId, startDate, endDate);
+            return (List<UserExpenseStatistic>) jdbcTemplate.query(GET_EXPENSES_BY_PERIOD, new UserExpensesStatisticMapper(), userId, startDate, endDate);
         } catch (EmptyResultDataAccessException ignore) {
             return null;
         }
