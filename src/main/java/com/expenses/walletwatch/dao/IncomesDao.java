@@ -1,7 +1,6 @@
 package com.expenses.walletwatch.dao;
 
 import com.expenses.walletwatch.entity.Income;
-import com.expenses.walletwatch.entity.UserExpenseStatistic;
 import com.expenses.walletwatch.entity.UserIncomeStatistic;
 import com.expenses.walletwatch.exception.BadRequest;
 import com.expenses.walletwatch.exception.NotFound;
