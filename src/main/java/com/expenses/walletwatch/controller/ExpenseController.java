@@ -47,13 +47,8 @@ public class ExpenseController {
 
     @GetMapping("expenses/user/statistic")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<UserExpenseStatistic>> getUserTransactionStatistic(
-            @RequestBody ExpensesTransactionsRequestDto userExpensesTransactionsDto
-    ){
-        return new ResponseEntity<>(expenseService.userTransactionsStatisticForPeriod(
-                userExpensesTransactionsDto.startDate,
-                userExpensesTransactionsDto.endDate
-        ), HttpStatus.OK);
+    public ResponseEntity<List<UserExpenseStatistic>> getUserTransactionStatistic(@RequestParam String startDate, String endDate){
+        return new ResponseEntity<>(expenseService.userTransactionsStatisticForPeriod(startDate, endDate), HttpStatus.OK);
     }
 
     @GetMapping("expenses/user/statistic/by-category")
