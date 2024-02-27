@@ -148,7 +148,7 @@ public class ExpenseDao {
         }
     }
 
-    public List<UserExpenseStatistic> getUsersExpensesTransactionStatisticByPeriod(Long userId, Date startDate, Date endDate) {
+    public List<UserExpenseStatistic> getUsersExpensesTransactionStatisticByPeriod(Long userId, String startDate, String endDate) {
         try {
             return (List<UserExpenseStatistic>) jdbcTemplate.query(GET_EXPENSES_BY_PERIOD, new UserExpensesStatisticMapper(), userId, startDate, endDate);
         } catch (EmptyResultDataAccessException ignore) {
