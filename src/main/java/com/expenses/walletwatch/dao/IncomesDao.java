@@ -51,23 +51,54 @@ public class IncomesDao {
 
     public Income addUserIncome(Long userId, int incomeId) {
         try {
-            GeneratedKeyHolder holder = new GeneratedKeyHolder();
-            jdbcTemplate.update(new PreparedStatementCreator() {
-                @Override
-                public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-                    PreparedStatement statement = con.prepareStatement("insert into user_incomes_category(user_id, income_category_id) values(?, ?) ", Statement.RETURN_GENERATED_KEYS);
-                    statement.setLong(1, userId);
-                    statement.setInt(2, incomeId);
-                    return statement;
+            int res = getExistingIncomeById(userId, incomeId);
+            if (res == 0) {
+                GeneratedKeyHolder holder = new GeneratedKeyHolder();
+                jdbcTemplate.update(new PreparedStatementCreator() {
+                    @Override
+                    public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+                        PreparedStatement statement = con.prepareStatement("insert into user_incomes_category(user_id, income_category_id) values(?, ?) ", Statement.RETURN_GENERATED_KEYS);
+                        statement.setLong(1, userId);
+                        statement.setInt(2, incomeId);
+                        return statement;
+                    }
+                }, holder);
+                Optional<Object> id = GetIdFromCreatedEntity.getId(holder);
+                if (id.isPresent()) {
+                    return getIncomeById(userId, id.get());
                 }
-            }, holder);
-            Optional<Object> id = GetIdFromCreatedEntity.getId(holder);
-            if (id.isPresent()) {
-                return getIncomeById(userId, id.get());
+            } else {
+                try {
+                    String sql = """
+                        update user_incomes_category
+                        set is_active = true
+                        where user_id = ? and id = ?
+                        """;
+                    jdbcTemplate.update(sql, userId, res);
+                    return getIncomeById(userId, res);
+                } catch (RuntimeException e) {
+                    throw new BadRequest(e.getCause());
+                }
             }
             return null;
         } catch (EmptyResultDataAccessException ignore) {
             return null;
+        }
+    }
+
+    public int getExistingIncomeById(Long userId, Object id) {
+        String sql = """
+                select user_incomes_category.id, incomes_category_name, is_active from user_incomes_category
+                left outer join incomes_category
+                on user_incomes_category.income_category_id = incomes_category.id
+                where user_id = ? and income_category_id = ?
+                order by id;
+                """;
+        List<Income> data = jdbcTemplate.query(sql, new IncomeRowMapper(), userId, id);
+        if (data.size() == 0) {
+            return 0;
+        } else {
+            return data.get(0).getId().intValue();
         }
     }
 
@@ -91,7 +122,8 @@ public class IncomesDao {
                 select user_incomes_category.id, incomes_category_name, user_id from user_incomes_category
                 left outer join incomes_category
                 on user_incomes_category.income_category_id = incomes_category.id
-                where user_id = ?;
+                where user_id = ? and is_active = true
+                order by id;
                 """;
         try {
             List<Income> incomes = jdbcTemplate.query(sql, new IncomeRowMapper(), userId);
@@ -102,7 +134,8 @@ public class IncomesDao {
 
     public Object removeUserIncome(Long userId, int incomeId) {
         String sql = """
-               delete from user_incomes_category
+               update user_incomes_category
+               set is_active = false
                where user_id = ? and id = ?
                """;
         try {
