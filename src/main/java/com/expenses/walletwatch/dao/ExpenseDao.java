@@ -111,7 +111,6 @@ public class ExpenseDao {
                 order by id;
                 """;
         List<Expense> data = jdbcTemplate.query(sql, new ExpenseRowMapper(), userID, id);
-        System.out.println(data);
         if (data.size() == 0) {
             return 0;
         } else {
