@@ -2,7 +2,10 @@ package com.expenses.walletwatch.controller;
 
 import com.expenses.walletwatch.dto.OperationExpenseRequestDto;
 import com.expenses.walletwatch.dto.OperationExpenseResponseDto;
+import com.expenses.walletwatch.dto.OperationIncomeRequestDto;
+import com.expenses.walletwatch.dto.OperationIncomeResponseDto;
 import com.expenses.walletwatch.service.OperationExpenseService;
+import com.expenses.walletwatch.service.OperationIncomeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +18,17 @@ import java.util.List;
 public class OperationController {
 
     private final OperationExpenseService operationExpenseService;
+    private final OperationIncomeService operationIncomeService;
 
-    public OperationController(OperationExpenseService operationExpenseService) {
+    public OperationController(OperationExpenseService operationExpenseService, OperationIncomeService operationIncomeService) {
         this.operationExpenseService = operationExpenseService;
+        this.operationIncomeService = operationIncomeService;
+    }
+
+    @PostMapping("/income")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<OperationIncomeResponseDto> createOperationIncome(@RequestBody OperationIncomeRequestDto dto) {
+        return new ResponseEntity<>(operationIncomeService.createOperationIncome(dto), HttpStatus.CREATED);
     }
 
     @PostMapping("/expense")
