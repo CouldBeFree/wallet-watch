@@ -13,7 +13,7 @@ public class OperationIncomeRowMapper implements RowMapper {
         OperationIncome operationIncome = new OperationIncome();
         operationIncome.setId(rs.getLong("id"));
         operationIncome.setDate(rs.getString("date"));
-        operationIncome.setIncomes_category_name("incomes_category_name");
+        operationIncome.setIncomes_category_name(rs.getString("incomes_category_name"));
         operationIncome.setAmount(rs.getInt("amount"));
 
         return operationIncome;

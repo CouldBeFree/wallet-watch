@@ -56,10 +56,13 @@ public class OperationIncomeDao {
 
     public OperationIncome getOperationIncomeById(Long userId, Object id) {
         String sql = """
-                select user_transaction_incomes.id, amount, date, incomes_category_name from user_transaction_incomes
+                select user_transaction_incomes.id, amount, incomes_category.incomes_category_name, user_transaction_incomes.date
+                from user_transaction_incomes
+                left outer join user_incomes_category
+                on user_incomes_category.id = user_transaction_incomes.income_category_id
                 left outer join incomes_category
-                on user_transaction_incomes.income_category_id = incomes_category.id
-                where user_id = ? and user_transaction_incomes.id = ?
+                on user_incomes_category.income_category_id = incomes_category.id
+                where user_transaction_incomes.user_id = ? and user_transaction_incomes.id = ?;
                 """;
         try {
             List<OperationIncome> data = jdbcTemplate.query(sql, new OperationIncomeRowMapper(), userId, id);
