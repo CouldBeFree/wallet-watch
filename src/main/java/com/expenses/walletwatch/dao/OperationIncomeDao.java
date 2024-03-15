@@ -76,4 +76,21 @@ public class OperationIncomeDao {
             throw new BadRequest(e.getCause());
         }
     }
+
+    public List<OperationIncome> getAllOperationExpenses(Long userId) {
+        String sql = """
+                select user_transaction_incomes.id, amount, date, incomes_category.incomes_category_name from user_transaction_incomes
+                left outer join user_incomes_category
+                on user_transaction_incomes.income_category_id = user_incomes_category.id
+                left outer join incomes_category
+                on user_incomes_category.income_category_id = incomes_category.id
+                where user_incomes_category.user_id = ?
+                order by id;
+                """;
+        try {
+            return jdbcTemplate.query(sql, new OperationIncomeRowMapper(), userId);
+        } catch (EmptyResultDataAccessException ignore) {
+            return null;
+        }
+    }
 }

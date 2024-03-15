@@ -31,6 +31,12 @@ public class OperationController {
         return new ResponseEntity<>(operationIncomeService.createOperationIncome(dto), HttpStatus.CREATED);
     }
 
+    @GetMapping("/income")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<OperationIncomeResponseDto>> getAllOperationIncomes() {
+        return new ResponseEntity<>(operationIncomeService.getAllOperationIncomes(), HttpStatus.OK);
+    }
+
     @PostMapping("/expense")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<OperationExpenseResponseDto> createOperationExpense(@RequestBody OperationExpenseRequestDto dto) {
