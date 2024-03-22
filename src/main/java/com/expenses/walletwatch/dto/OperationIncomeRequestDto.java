@@ -9,12 +9,12 @@ public class OperationIncomeRequestDto {
     private int amount;
     private String date;
     private int income_category_id;
-    private String income_category_name;
+    private String incomes_category_name;
 
-    public OperationIncomeRequestDto(int amount, String date, int income_category_id, String income_category_name) {
+    public OperationIncomeRequestDto(int amount, String date, int income_category_id, String incomes_category_name) {
         this.amount = amount;
         this.date = date;
         this.income_category_id = income_category_id;
-        this.income_category_name = income_category_name;
+        this.incomes_category_name = incomes_category_name;
     }
 }

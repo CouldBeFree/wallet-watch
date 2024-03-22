@@ -37,6 +37,12 @@ public class OperationController {
         return new ResponseEntity<>(operationIncomeService.getAllOperationIncomes(), HttpStatus.OK);
     }
 
+    @PutMapping("/income/{incomeId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<OperationIncomeResponseDto> updateOperationIncome(@RequestBody OperationIncomeRequestDto dto, @PathVariable int incomeId) {
+        return new ResponseEntity<>(operationIncomeService.updateOperationIncome(dto, incomeId), HttpStatus.OK);
+    }
+
     @PostMapping("/expense")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<OperationExpenseResponseDto> createOperationExpense(@RequestBody OperationExpenseRequestDto dto) {
