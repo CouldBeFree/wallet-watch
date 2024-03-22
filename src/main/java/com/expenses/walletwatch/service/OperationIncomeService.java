@@ -1,10 +1,8 @@
 package com.expenses.walletwatch.service;
 
 import com.expenses.walletwatch.dao.OperationIncomeDao;
-import com.expenses.walletwatch.dto.OperationExpenseResponseDto;
 import com.expenses.walletwatch.dto.OperationIncomeRequestDto;
 import com.expenses.walletwatch.dto.OperationIncomeResponseDto;
-import com.expenses.walletwatch.entity.OperationExpense;
 import com.expenses.walletwatch.entity.OperationIncome;
 import com.expenses.walletwatch.exception.BadRequest;
 import com.expenses.walletwatch.utils.GetUserData;
@@ -53,5 +51,16 @@ public class OperationIncomeService {
             operationIncomeResponseDtos.add(operationIncomeResponseDto);
         }
         return operationIncomeResponseDtos;
+    }
+
+    public OperationIncomeResponseDto updateOperationIncome(OperationIncomeRequestDto dto, int incomeId) {
+        Long userId = getUserData.getUserIdFromToken();
+        OperationIncome income = incomeDao.updateOperationIncome(dto, userId, incomeId);
+        return new OperationIncomeResponseDto(
+                income.getId(),
+                income.getDate(),
+                income.getIncomes_category_name(),
+                income.getAmount()
+        );
     }
 }
