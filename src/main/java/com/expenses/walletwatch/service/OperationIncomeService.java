@@ -6,6 +6,7 @@ import com.expenses.walletwatch.dto.OperationIncomeResponseDto;
 import com.expenses.walletwatch.entity.OperationIncome;
 import com.expenses.walletwatch.exception.BadRequest;
 import com.expenses.walletwatch.utils.GetUserData;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,6 +33,16 @@ public class OperationIncomeService {
                     operationIncome.getAmount()
             );
         } catch (RuntimeException e) {
+            throw new BadRequest(e.getCause());
+        }
+    }
+
+    public String removeOperationIncome(int incomeId) {
+        Long userId = getUserData.getUserIdFromToken();
+        try {
+            incomeDao.removeOperationIncome(userId, incomeId);
+            return "Removed";
+        } catch (EmptyResultDataAccessException e) {
             throw new BadRequest(e.getCause());
         }
     }
