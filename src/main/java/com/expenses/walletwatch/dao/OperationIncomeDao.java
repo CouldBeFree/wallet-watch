@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -52,6 +53,19 @@ public class OperationIncomeDao {
             return null;
         } catch (EmptyResultDataAccessException ignore) {
             return null;
+        }
+    }
+
+    public boolean removeOperationIncome(Long userId, int id) {
+        String sql = """
+               delete from user_transaction_incomes
+               where user_id = ? and id = ?
+               """;
+        try {
+            jdbcTemplate.update(sql,userId, id);
+            return true;
+        } catch (HttpClientErrorException.NotFound e) {
+            throw new BadRequest(e.getMessage());
         }
     }
 

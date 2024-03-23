@@ -43,6 +43,12 @@ public class OperationController {
         return new ResponseEntity<>(operationIncomeService.updateOperationIncome(dto, incomeId), HttpStatus.OK);
     }
 
+    @DeleteMapping("/income/{incomeId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<String> removeOperationIncome(@PathVariable int incomeId) {
+        return new ResponseEntity<>(operationIncomeService.removeOperationIncome(incomeId), HttpStatus.OK);
+    }
+
     @PostMapping("/expense")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<OperationExpenseResponseDto> createOperationExpense(@RequestBody OperationExpenseRequestDto dto) {
