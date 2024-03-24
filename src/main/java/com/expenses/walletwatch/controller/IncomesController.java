@@ -48,13 +48,8 @@ public class IncomesController {
 
     @GetMapping("incomes/user/statistic")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<UserIncomeStatistic>> getUserTransactionStatistic(
-            @RequestBody IncomesTransactionsRequestDto userExpensesTransactionsDto
-    ){
-        return new ResponseEntity<>(incomeService.userTransactionsStatisticForPeriod(
-                userExpensesTransactionsDto.startDate,
-                userExpensesTransactionsDto.endDate
-        ), HttpStatus.OK);
+    public ResponseEntity<List<UserIncomeStatistic>> getUserTransactionStatistic(@RequestParam String startDate, String endDate){
+        return new ResponseEntity<>(incomeService.userTransactionsStatisticForPeriod(startDate, endDate), HttpStatus.OK);
     }
 
     @GetMapping("incomes/user/statistic/by-category")

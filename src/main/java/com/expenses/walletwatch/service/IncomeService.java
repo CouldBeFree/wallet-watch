@@ -54,10 +54,14 @@ public class IncomeService {
         return incomeDao.getUsersIncomes(userId);
     }
 
-    public List<UserIncomeStatistic> userTransactionsStatisticForPeriod(Date startDate, Date endDate) {
+    public List<UserIncomeStatistic> userTransactionsStatisticForPeriod(String startDate, String endDate) {
 //  TODO: add startDate and endDate validator, if startDate is empty need to get user registration date if endDate is empty - today date
         Long userId = getUserData.getUserIdFromToken();
-        return incomeDao.getUsersIncomesTransactionStatisticByPeriod(userId, startDate, endDate);
+        try {
+            return incomeDao.getUsersIncomesTransactionStatisticByPeriod(userId, startDate, endDate);
+        } catch (RuntimeException e) {
+            throw new BadRequest(e.getCause());
+        }
     }
 
     public List<UserIncomeStatistic> userTransactionsStatisticByCategory(ArrayList<Integer> userCategoryId, Date startDate, Date endDate) {

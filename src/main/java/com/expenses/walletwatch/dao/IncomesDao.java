@@ -143,7 +143,7 @@ public class IncomesDao {
         } catch (EmptyResultDataAccessException ignore) {return null;}
     }
 
-    public List<UserIncomeStatistic> getUsersIncomesTransactionStatisticByPeriod(Long userId, Date startDate, Date endDate) {
+    public List<UserIncomeStatistic> getUsersIncomesTransactionStatisticByPeriod(Long userId, String startDate, String endDate) {
         try {
             return (List<UserIncomeStatistic>) jdbcTemplate.query(GET_INCOMES_BY_PERIOD, new UserIncomesStatisticMapper(), userId, startDate, endDate);
         } catch (EmptyResultDataAccessException ignore) {

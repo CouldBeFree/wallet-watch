@@ -10,7 +10,7 @@ public class IncomesByPeriodQueryHandler {
                 JOIN incomes_category
                 ON user_incomes_category.income_category_id = incomes_category.id
                 WHERE user_transaction_incomes.user_id = ?
-                AND date between ? and ?
+                AND date between to_date(?, 'YYYY-MM-DD') and to_date(?, 'YYYY-MM-DD')
                 GROUP BY incomes_category.incomes_category_name, user_transaction_incomes.income_category_id;
                 """;
 }
