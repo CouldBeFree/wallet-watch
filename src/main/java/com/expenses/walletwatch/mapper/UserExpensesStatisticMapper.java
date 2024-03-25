@@ -13,6 +13,7 @@ public class UserExpensesStatisticMapper implements RowMapper<UserExpenseStatist
         userExpenseStatistic.setExpenses_category_name(rs.getString("expenses_category_name"));
         userExpenseStatistic.setAmount_sum(rs.getFloat("sum"));
         userExpenseStatistic.setId(rs.getInt("expense_category_id"));
+        userExpenseStatistic.setColor(rs.getString("color"));
         return userExpenseStatistic;
     }
 }
