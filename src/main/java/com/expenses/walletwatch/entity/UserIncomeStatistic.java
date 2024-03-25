@@ -13,4 +13,5 @@ public class UserIncomeStatistic {
     private String income_category_name;
     private Float amount_sum;
     private Integer id;
+    private String color;
 }
