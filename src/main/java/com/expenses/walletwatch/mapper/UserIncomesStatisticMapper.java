@@ -15,6 +15,7 @@ public class UserIncomesStatisticMapper implements RowMapper<UserIncomeStatistic
         userIncomeStatistic.setIncome_category_name(rs.getString("incomes_category_name"));
         userIncomeStatistic.setAmount_sum(rs.getFloat("sum"));
         userIncomeStatistic.setId(rs.getInt("income_category_id"));
+        userIncomeStatistic.setColor(rs.getString("color"));
         return userIncomeStatistic;
     }
 }
