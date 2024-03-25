@@ -14,4 +14,5 @@ public class UserExpenseStatistic {
     private String expenses_category_name;
     private Float amount_sum;
     private Integer id;
+    private String color;
 }
