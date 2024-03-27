@@ -23,6 +23,8 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
+import static com.expenses.walletwatch.utils.handler.TransactionsExpenseQueryHandler.*;
+
 @Repository
 public class OperationExpenseDao {
     private final JdbcTemplate jdbcTemplate;
@@ -127,20 +129,16 @@ public class OperationExpenseDao {
         }
     };
 
-    public List<OperationExpense> getAllOperationExpenses(Long userId) {
-        String sql = """
-                select user_transaction_expenses.id, amount, date, expenses_category.expenses_category_name from user_transaction_expenses
-                left outer join user_expenses_category
-                on user_transaction_expenses.expense_category_id = user_expenses_category.id
-                left outer join expenses_category
-                on user_expenses_category.expense_category_id = expenses_category.id
-                where user_expenses_category.user_id = ?
-                order by id;
-                """;
+    public List<OperationExpense> getAllOperationExpenses(Long userId, Optional<String> startDate, Optional<String> endDate) {
+        String request = startDate.isEmpty() && endDate.isEmpty() ? GET_EXPENSES_TRANSACTIONS + ORDER_BY_ID : appendQuery() + ORDER_BY_ID;
         try {
-            return jdbcTemplate.query(sql, new OperationExpenseRowMapper(), userId);
-        } catch (EmptyResultDataAccessException ignore) {
-            return null;
+            if (startDate.isPresent() && endDate.isPresent()) {
+                return jdbcTemplate.query(request, new OperationExpenseRowMapper(), userId, startDate.get(), endDate.get());
+            } else {
+                return jdbcTemplate.query(request, new OperationExpenseRowMapper(), userId);
+            }
+        } catch (RuntimeException e) {
+            throw new BadRequest(e.getCause());
         }
     }
 }

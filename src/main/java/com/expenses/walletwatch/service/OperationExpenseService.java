@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OperationExpenseService {
@@ -69,9 +70,9 @@ public class OperationExpenseService {
         );
     }
 
-    public List<OperationExpenseResponseDto> getAllOperationExpenses() {
+    public List<OperationExpenseResponseDto> getAllOperationExpenses(Optional<String> startDate, Optional<String> endDate) {
         Long userId = getUserData.getUserIdFromToken();
-        List<OperationExpense> value = expenseDao.getAllOperationExpenses(userId);
+        List<OperationExpense> value = expenseDao.getAllOperationExpenses(userId, startDate, endDate);
         List<OperationExpenseResponseDto> operationExpenseResponseDtos = new ArrayList<>();
         for (int i = 0; i < value.size(); i++) {
             OperationExpense operationExpense = value.get(i);

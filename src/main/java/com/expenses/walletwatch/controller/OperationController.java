@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -57,8 +58,8 @@ public class OperationController {
 
     @GetMapping("/expense")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<OperationExpenseResponseDto>> getAllOperationsExpenses() {
-        return new ResponseEntity<>(operationExpenseService.getAllOperationExpenses(), HttpStatus.OK);
+    public ResponseEntity<List<OperationExpenseResponseDto>> getAllOperationsExpenses(@RequestParam Optional<String> startDate, Optional<String> endDate) {
+        return new ResponseEntity<>(operationExpenseService.getAllOperationExpenses(startDate, endDate), HttpStatus.OK);
     }
 
     @PutMapping("/expense/{expenseId}")
