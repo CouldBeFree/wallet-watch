@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OperationIncomeService {
@@ -47,9 +48,9 @@ public class OperationIncomeService {
         }
     }
 
-    public List<OperationIncomeResponseDto> getAllOperationIncomes() {
+    public List<OperationIncomeResponseDto> getAllOperationIncomes(Optional<String> startDate, Optional<String> endDate) {
         Long userId = getUserData.getUserIdFromToken();
-        List<OperationIncome> value = incomeDao.getAllOperationExpenses(userId);
+        List<OperationIncome> value = incomeDao.getAllOperationExpenses(userId, startDate, endDate);
         List<OperationIncomeResponseDto> operationIncomeResponseDtos = new ArrayList<>();
         for (int i = 0; i < value.size(); i++) {
             OperationIncome operationIncome = value.get(i);

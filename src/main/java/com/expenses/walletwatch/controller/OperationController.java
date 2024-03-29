@@ -34,8 +34,8 @@ public class OperationController {
 
     @GetMapping("/income")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<OperationIncomeResponseDto>> getAllOperationIncomes() {
-        return new ResponseEntity<>(operationIncomeService.getAllOperationIncomes(), HttpStatus.OK);
+    public ResponseEntity<List<OperationIncomeResponseDto>> getAllOperationIncomes(@RequestParam Optional<String> startDate, Optional<String> endDate) {
+        return new ResponseEntity<>(operationIncomeService.getAllOperationIncomes(startDate, endDate), HttpStatus.OK);
     }
 
     @PutMapping("/income/{incomeId}")
