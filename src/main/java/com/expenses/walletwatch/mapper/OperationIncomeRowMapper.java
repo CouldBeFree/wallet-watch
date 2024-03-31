@@ -1,6 +1,5 @@
 package com.expenses.walletwatch.mapper;
 
-import com.expenses.walletwatch.entity.OperationExpense;
 import com.expenses.walletwatch.entity.OperationIncome;
 import org.springframework.jdbc.core.RowMapper;
 
