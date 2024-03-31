@@ -1,6 +1,5 @@
 package com.expenses.walletwatch.dto;
 
-import com.expenses.walletwatch.dao.TotalDao;
 import lombok.Data;
 
 @Data
