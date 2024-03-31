@@ -2,9 +2,11 @@ package com.expenses.walletwatch.dao;
 
 import com.expenses.walletwatch.entity.TotalExpense;
 import com.expenses.walletwatch.entity.TotalIncome;
+import com.expenses.walletwatch.entity.TransactionHistory;
 import com.expenses.walletwatch.exception.BadRequest;
 import com.expenses.walletwatch.mapper.TotalExpenseRowMapper;
 import com.expenses.walletwatch.mapper.TotalIncomeRowMapper;
+import com.expenses.walletwatch.mapper.TransactionHistoryMapper;
 import com.expenses.walletwatch.utils.DateFormatParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -65,6 +67,60 @@ public class TotalDao {
             }
         } catch (RuntimeException e) {
             throw new BadRequest(e.getMessage());
+        }
+    }
+
+    public List<TransactionHistory> getTransactionhistory(Long userId, Optional<String> startDate, Optional<String> endDate) {
+        String sqlWithDate = """
+                select * from
+                (select
+                    user_transaction_expenses.id as id,
+                    user_transaction_expenses.date as transaction_date,
+                    user_transaction_expenses.amount as amount,
+                    user_transaction_expenses.user_id as user,
+                    true as expenses
+                from user_transaction_expenses
+                union
+                select
+                    user_transaction_incomes.id as id,
+                    user_transaction_incomes.date as transaction_date,
+                    user_transaction_incomes.amount as amount,
+                    user_transaction_incomes.user_id as user,
+                    false as expenses
+                from user_transaction_incomes) AS test_table
+                    where test_table.user = ?
+                    and test_table.transaction_date between ? and ?
+                order by transaction_date;
+                """;
+        String rawSql = """
+                select * from
+                (select
+                    user_transaction_expenses.id as id,
+                    user_transaction_expenses.date as transaction_date,
+                    user_transaction_expenses.amount as amount,
+                    user_transaction_expenses.user_id as user,
+                    true as expenses
+                from user_transaction_expenses
+                union
+                select
+                    user_transaction_incomes.id as id,
+                    user_transaction_incomes.date as transaction_date,
+                    user_transaction_incomes.amount as amount,
+                    user_transaction_incomes.user_id as user,
+                    false as expenses
+                from user_transaction_incomes) AS test_table
+                    where test_table.user = ?
+                order by transaction_date;
+                """;
+        String request = startDate.isEmpty() && endDate.isEmpty() ? rawSql : sqlWithDate;
+        try {
+            if (startDate.isPresent() && endDate.isPresent()) {
+                return jdbcTemplate.query(request, new TransactionHistoryMapper(), userId, DateFormatParser.ConvertDate(startDate.get()), DateFormatParser.ConvertDate(endDate.get()));
+            } else {
+                return jdbcTemplate.query(request, new TransactionHistoryMapper(), userId);
+            }
+        } catch (RuntimeException e) {
+            throw new BadRequest(e.getCause());
         }
     }
 }

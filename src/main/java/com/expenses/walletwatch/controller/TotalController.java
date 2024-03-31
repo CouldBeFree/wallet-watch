@@ -1,11 +1,13 @@
 package com.expenses.walletwatch.controller;
 
 import com.expenses.walletwatch.dto.TotalDto;
+import com.expenses.walletwatch.dto.TransactionHistoryDto;
 import com.expenses.walletwatch.service.TotalService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -23,5 +25,11 @@ public class TotalController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<TotalDto> getTotal(@RequestParam Optional<String> startDate, Optional<String> endDate) {
         return new ResponseEntity<>(totalService.getTotal(startDate, endDate), HttpStatus.OK);
+    }
+
+    @GetMapping("/transaction-history")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<TransactionHistoryDto>> getTransactionHistory(@RequestParam Optional<String> startDate, Optional<String> endDate) {
+        return new ResponseEntity<>(totalService.getHistory(startDate, endDate), HttpStatus.OK);
     }
 }
