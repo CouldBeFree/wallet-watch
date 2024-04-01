@@ -14,4 +14,5 @@ public class TransactionHistory {
     private String date;
     private Long amount;
     private Boolean expenses;
+    private String category_name;
 }

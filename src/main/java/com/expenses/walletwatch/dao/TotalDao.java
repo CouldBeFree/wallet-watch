@@ -72,45 +72,69 @@ public class TotalDao {
 
     public List<TransactionHistory> getTransactionhistory(Long userId, Optional<String> startDate, Optional<String> endDate) {
         String sqlWithDate = """
-                select * from
-                (select
-                    user_transaction_expenses.id as id,
-                    user_transaction_expenses.date as transaction_date,
-                    user_transaction_expenses.amount as amount,
-                    user_transaction_expenses.user_id as user,
-                    true as expenses
-                from user_transaction_expenses
-                union
-                select
-                    user_transaction_incomes.id as id,
-                    user_transaction_incomes.date as transaction_date,
-                    user_transaction_incomes.amount as amount,
-                    user_transaction_incomes.user_id as user,
-                    false as expenses
-                from user_transaction_incomes) AS test_table
-                    where test_table.user = ?
-                    and test_table.transaction_date between ? and ?
-                order by transaction_date;
+                SELECT *
+                FROM (
+                    SELECT
+                        user_transaction_expenses.id AS id,
+                        user_transaction_expenses.date AS transaction_date,
+                        user_transaction_expenses.amount AS amount,
+                        user_transaction_expenses.user_id AS user,
+                        user_transaction_expenses.expense_category_id AS category_id,
+                        expenses_category.expenses_category_name AS category_name,
+                        true AS expenses
+                    FROM user_transaction_expenses
+                    LEFT OUTER JOIN user_expenses_category ON user_transaction_expenses.expense_category_id = user_expenses_category.id
+                    LEFT OUTER JOIN expenses_category ON user_expenses_category.expense_category_id = expenses_category.id
+                   \s
+                    UNION
+                   \s
+                    SELECT
+                        user_transaction_incomes.id AS id,
+                        user_transaction_incomes.date AS transaction_date,
+                        user_transaction_incomes.amount AS amount,
+                        user_transaction_incomes.user_id AS user,
+                        user_transaction_incomes.income_category_id AS category_id,
+                        incomes_category.incomes_category_name AS category_name,
+                        false AS expenses
+                    FROM user_transaction_incomes
+                    LEFT OUTER JOIN user_incomes_category ON user_transaction_incomes.income_category_id = user_incomes_category.id
+                    LEFT OUTER JOIN incomes_category ON user_incomes_category.income_category_id = incomes_category.id
+                ) AS test_table
+                WHERE test_table.user = ?
+                and test_table.transaction_date between ? and ?
+                ORDER BY transaction_date;
                 """;
         String rawSql = """
-                select * from
-                (select
-                    user_transaction_expenses.id as id,
-                    user_transaction_expenses.date as transaction_date,
-                    user_transaction_expenses.amount as amount,
-                    user_transaction_expenses.user_id as user,
-                    true as expenses
-                from user_transaction_expenses
-                union
-                select
-                    user_transaction_incomes.id as id,
-                    user_transaction_incomes.date as transaction_date,
-                    user_transaction_incomes.amount as amount,
-                    user_transaction_incomes.user_id as user,
-                    false as expenses
-                from user_transaction_incomes) AS test_table
-                    where test_table.user = ?
-                order by transaction_date;
+                SELECT *
+                FROM (
+                    SELECT
+                        user_transaction_expenses.id AS id,
+                        user_transaction_expenses.date AS transaction_date,
+                        user_transaction_expenses.amount AS amount,
+                        user_transaction_expenses.user_id AS user,
+                        user_transaction_expenses.expense_category_id AS category_id,
+                        expenses_category.expenses_category_name AS category_name,
+                        true AS expenses
+                    FROM user_transaction_expenses
+                    LEFT OUTER JOIN user_expenses_category ON user_transaction_expenses.expense_category_id = user_expenses_category.id
+                    LEFT OUTER JOIN expenses_category ON user_expenses_category.expense_category_id = expenses_category.id
+                   \s
+                    UNION
+                   \s
+                    SELECT
+                        user_transaction_incomes.id AS id,
+                        user_transaction_incomes.date AS transaction_date,
+                        user_transaction_incomes.amount AS amount,
+                        user_transaction_incomes.user_id AS user,
+                        user_transaction_incomes.income_category_id AS category_id,
+                        incomes_category.incomes_category_name AS category_name,
+                        false AS expenses
+                    FROM user_transaction_incomes
+                    LEFT OUTER JOIN user_incomes_category ON user_transaction_incomes.income_category_id = user_incomes_category.id
+                    LEFT OUTER JOIN incomes_category ON user_incomes_category.income_category_id = incomes_category.id
+                ) AS test_table
+                WHERE test_table.user = ?
+                ORDER BY transaction_date;
                 """;
         String request = startDate.isEmpty() && endDate.isEmpty() ? rawSql : sqlWithDate;
         try {

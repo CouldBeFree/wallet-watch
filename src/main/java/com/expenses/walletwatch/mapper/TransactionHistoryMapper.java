@@ -14,6 +14,7 @@ public class TransactionHistoryMapper implements RowMapper {
         transactionHistory.setDate(rs.getString("transaction_date"));
         transactionHistory.setAmount(rs.getLong("amount"));
         transactionHistory.setExpenses(rs.getBoolean("expenses"));
+        transactionHistory.setCategory_name(rs.getString("category_name"));
 
         return transactionHistory;
     }

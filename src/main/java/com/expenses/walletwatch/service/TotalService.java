@@ -40,7 +40,8 @@ public class TotalService {
                     transactionHistoryItem.getId(),
                     transactionHistoryItem.getAmount(),
                     transactionHistoryItem.getExpenses(),
-                    transactionHistoryItem.getDate()
+                    transactionHistoryItem.getDate(),
+                    transactionHistoryItem.getCategory_name()
             );
             transactionHistoryDtos.add(dto);
         }
