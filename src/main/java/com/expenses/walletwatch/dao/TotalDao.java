@@ -102,7 +102,7 @@ public class TotalDao {
                 ) AS test_table
                 WHERE test_table.user = ?
                 and test_table.transaction_date between ? and ?
-                ORDER BY transaction_date
+                ORDER BY transaction_date desc
                 LIMIT 4
                 """;
         String rawSql = """
@@ -135,7 +135,7 @@ public class TotalDao {
                     LEFT OUTER JOIN incomes_category ON user_incomes_category.income_category_id = incomes_category.id
                 ) AS test_table
                 WHERE test_table.user = ?
-                ORDER BY transaction_date
+                ORDER BY transaction_date desc
                 LIMIT 4
                 """;
         String request = startDate.isEmpty() && endDate.isEmpty() ? rawSql : sqlWithDate;
