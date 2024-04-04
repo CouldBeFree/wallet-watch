@@ -20,4 +20,9 @@ public class GoalService {
         Long userId = getUserData.getUserIdFromToken();
         return goalDao.createGoal(dto, userId);
     }
+
+    public Goal getGoal(int goalId) {
+        Long userId = getUserData.getUserIdFromToken();
+        return goalDao.getGoalById(userId, goalId);
+    }
 }

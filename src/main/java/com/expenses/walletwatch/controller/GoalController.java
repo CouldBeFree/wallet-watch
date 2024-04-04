@@ -18,8 +18,14 @@ public class GoalController {
     }
 
     @PostMapping("goal")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Goal> createGoal(@RequestBody GoalRequestDto dto) {
-        return new ResponseEntity<>(goalService.createGoal(dto), HttpStatus.OK);
+        return new ResponseEntity<>(goalService.createGoal(dto), HttpStatus.CREATED);
+    }
+
+    @GetMapping("goal/{goalId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Goal> getGoal(@PathVariable int goalId) {
+        return new ResponseEntity<>(goalService.getGoal(goalId), HttpStatus.OK);
     }
 }
