@@ -25,4 +25,9 @@ public class GoalService {
         Long userId = getUserData.getUserIdFromToken();
         return goalDao.getGoalById(userId, goalId);
     }
+
+    public String removeGoal(int goalId) {
+        Long userId = getUserData.getUserIdFromToken();
+        return goalDao.removeGoal(userId, goalId) ? "Removed" : null;
+    }
 }

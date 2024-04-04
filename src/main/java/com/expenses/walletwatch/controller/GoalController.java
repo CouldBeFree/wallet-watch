@@ -28,4 +28,10 @@ public class GoalController {
     public ResponseEntity<Goal> getGoal(@PathVariable int goalId) {
         return new ResponseEntity<>(goalService.getGoal(goalId), HttpStatus.OK);
     }
+
+    @DeleteMapping("goal/{goalId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<String> removeGoal(@PathVariable int goalId) {
+        return new ResponseEntity<>(goalService.removeGoal(goalId), HttpStatus.OK);
+    }
 }

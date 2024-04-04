@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -66,5 +67,19 @@ public class GoalDao {
             throw new NotFound(notFoundMessage);
         }
         return data.get(0);
+    }
+
+    public boolean removeGoal(Long userId, Object id) {
+        String sql = """
+                delete from goal
+                where user_id = ? and id = ?
+                """;
+        try {
+            getGoalById(userId, id);
+            jdbcTemplate.update(sql,userId, id);
+            return true;
+        } catch (HttpClientErrorException.NotFound e) {
+            throw new NotFound(e.getMessage());
+        }
     }
 }
