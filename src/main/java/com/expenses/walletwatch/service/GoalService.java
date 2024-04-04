@@ -6,6 +6,8 @@ import com.expenses.walletwatch.entity.Goal;
 import com.expenses.walletwatch.utils.GetUserData;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class GoalService {
     private final GoalDao goalDao;
@@ -34,5 +36,10 @@ public class GoalService {
     public Goal updateGoal(int goalId, GoalRequestDto dto) {
         Long userId = getUserData.getUserIdFromToken();
         return goalDao.updateGoal(goalId, dto, userId);
+    }
+
+    public List<Goal> getGoals() {
+        Long userId = getUserData.getUserIdFromToken();
+        return goalDao.getGoals(userId);
     }
 }

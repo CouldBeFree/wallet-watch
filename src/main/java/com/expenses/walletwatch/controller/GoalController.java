@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/")
@@ -39,5 +41,11 @@ public class GoalController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Goal> updateGoal(@PathVariable int goalId, @RequestBody GoalRequestDto dto) {
         return new ResponseEntity<>(goalService.updateGoal(goalId, dto), HttpStatus.OK);
+    }
+
+    @GetMapping("goal")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<Goal>> getGoals() {
+        return new ResponseEntity<>(goalService.getGoals(), HttpStatus.OK);
     }
 }

@@ -69,6 +69,14 @@ public class GoalDao {
         return data.get(0);
     }
 
+    public List<Goal> getGoals(Long userId) {
+        String sql = """
+                select id, target_amount, already_saved, desired_date, currency, goal_name from goal
+                where user_id = ?;
+                """;
+        return jdbcTemplate.query(sql, new GoalRowMapper(), userId);
+    }
+
     public boolean removeGoal(Long userId, Object id) {
         String sql = """
                 delete from goal
