@@ -82,4 +82,32 @@ public class GoalDao {
             throw new NotFound(e.getMessage());
         }
     }
+
+    public Goal updateGoal(int goalId, GoalRequestDto dto, Long userId) {
+        try {
+            getGoalById(userId, goalId);
+            GeneratedKeyHolder holder = new GeneratedKeyHolder();
+            jdbcTemplate.update(new PreparedStatementCreator() {
+                @Override
+                public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+                    PreparedStatement statement = con.prepareStatement("update goal set target_amount = ?, already_saved = ?, desired_date = ?, currency = ?, goal_name = ? where id = ? and user_id = ?", Statement.RETURN_GENERATED_KEYS);
+                    statement.setDouble(1, dto.getTarget_amount());
+                    statement.setDouble(2, dto.getAlready_saved());
+                    statement.setDate(3, DateFormatParser.ConvertDate(dto.getDesired_date()));
+                    statement.setString(4, dto.getCurrency());
+                    statement.setString(5, dto.getGoal_name());
+                    statement.setInt(6, goalId);
+                    statement.setLong(7, userId);
+                    return statement;
+                }
+            }, holder);
+            Optional<Object> id = GetIdFromCreatedEntity.getId(holder);
+            if (id.isPresent()) {
+                return getGoalById(userId, id.get());
+            }
+            return null;
+        } catch (RuntimeException e) {
+            throw new BadRequest(e.getCause());
+        }
+    }
 }

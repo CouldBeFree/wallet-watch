@@ -30,4 +30,9 @@ public class GoalService {
         Long userId = getUserData.getUserIdFromToken();
         return goalDao.removeGoal(userId, goalId) ? "Removed" : null;
     }
+
+    public Goal updateGoal(int goalId, GoalRequestDto dto) {
+        Long userId = getUserData.getUserIdFromToken();
+        return goalDao.updateGoal(goalId, dto, userId);
+    }
 }

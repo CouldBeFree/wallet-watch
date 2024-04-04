@@ -34,4 +34,10 @@ public class GoalController {
     public ResponseEntity<String> removeGoal(@PathVariable int goalId) {
         return new ResponseEntity<>(goalService.removeGoal(goalId), HttpStatus.OK);
     }
+
+    @PutMapping("goal/{goalId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Goal> updateGoal(@PathVariable int goalId, @RequestBody GoalRequestDto dto) {
+        return new ResponseEntity<>(goalService.updateGoal(goalId, dto), HttpStatus.OK);
+    }
 }
