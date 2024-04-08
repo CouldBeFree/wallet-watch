@@ -14,7 +14,7 @@ public class TransactionsIncomeQueryHandler {
             and date between to_date(?, 'YYYY-MM-DD') and to_date(?, 'YYYY-MM-DD')
             """;
     public static final String ORDER_BY_ID = """
-            order by id;
+            order by date desc;
             """;
 
     public static String appendQuery() {
