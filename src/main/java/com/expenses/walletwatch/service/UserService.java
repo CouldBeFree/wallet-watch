@@ -3,51 +3,52 @@ package com.expenses.walletwatch.service;
 import com.expenses.walletwatch.dao.UserDao;
 import com.expenses.walletwatch.dto.UserRegistrationDto;
 import com.expenses.walletwatch.dto.UserResponseDto;
-import com.expenses.walletwatch.entity.UserEntity;
 import com.expenses.walletwatch.exception.BadRequest;
-import com.expenses.walletwatch.mapper.UserMapper;
+import com.expenses.walletwatch.model.Person;
+import com.expenses.walletwatch.repository.UserRepository;
 import com.expenses.walletwatch.utils.GetUserData;
+import com.expenses.walletwatch.utils.UserValidator;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
-    private final UserDao userDao;
+    private final PasswordEncoder passwordEncoder;
     private final GetUserData getUserData;
+    private final UserRepository userRepository;
 
-    public UserService(UserDao userDao, GetUserData getUserData) {
-        this.userDao = userDao;
+    public UserService(PasswordEncoder passwordEncoder, GetUserData getUserData, UserRepository userRepository) {
         this.getUserData = getUserData;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserResponseDto getLoggedInUser() {
         Long userId = getUserData.getUserIdFromToken();
-        try {
-            UserEntity user = userDao.getUserById(userId);
-            return new UserResponseDto(
-                    user.getEmail(),
-                    user.getUsername(),
-                    user.getId()
-            );
-        } catch (RuntimeException e) {
-            throw new BadRequest(e.getMessage());
-        }
+        Person person = userRepository.findById(userId).orElseThrow(() -> new BadRequest("User not found"));
+        return new UserResponseDto(
+                person.getEmail(),
+                person.getUsername(),
+                person.getId()
+        );
     }
 
-    public UserRegistrationDto registerUser(UserEntity userEntity) {
-        UserEntity user = UserMapper.mapToUser(userEntity);
+    public void registerUser(UserRegistrationDto dto) {
+        UserValidator UserToValidate = new UserValidator(dto.getUsername(), dto.getPassword(), dto.getEmail());
         try {
-            user.validateUser();
+            UserToValidate.validateUser();
         } catch (RuntimeException e) {
             throw new BadRequest(e.getMessage());
         }
-        Object isUserExist = userDao.getUserByEmailAndUsername(user);
-        if (isUserExist != null) {
+        Person ExistingUser = userRepository.findUserByEmailOrUsername(dto.getEmail(), dto.getUsername());
+        if (ExistingUser != null) {
             throw new BadRequest("Email or Username already exists");
         }
-        userDao.save(user);
-
-        UserEntity getUser = userDao.getUserByEmailAndUsername(user);
-        return new UserRegistrationDto(getUser.getId(), user.getEmail(), user.getUsername());
+        Person NewPerson = new Person();
+        NewPerson.setEmail(dto.getEmail());
+        NewPerson.setUsername(dto.getUsername());
+        NewPerson.setPassword(passwordEncoder.encode((dto.getPassword())));
+        userRepository.save(NewPerson);
     }
 }

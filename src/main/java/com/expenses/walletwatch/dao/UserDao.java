@@ -33,7 +33,6 @@ public class UserDao {
         return jdbcTemplate.update(sql, user.getPassword(), user.getUsername(), user.getEmail());
     }
 
-
     public UserEntity getUserByEmailAndUsername(UserEntity user) throws RuntimeException {
         String sql = """
                 select * from users
@@ -44,6 +43,7 @@ public class UserDao {
         }
         catch (EmptyResultDataAccessException ignore) {return null;}
     }
+
     public UserEntity getUserByUsername(String username) throws RuntimeException {
         String sql = """
                 SELECT id, username, email
