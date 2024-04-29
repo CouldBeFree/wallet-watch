@@ -1,6 +1,5 @@
 package com.expenses.walletwatch.service;
 
-import com.expenses.walletwatch.dao.UserDao;
 import com.expenses.walletwatch.dto.UserRegistrationDto;
 import com.expenses.walletwatch.dto.UserResponseDto;
 import com.expenses.walletwatch.exception.BadRequest;
