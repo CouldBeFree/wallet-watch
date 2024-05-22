@@ -5,6 +5,7 @@ import com.expenses.walletwatch.dto.ExpenseRequestDto;
 import com.expenses.walletwatch.entity.Expense;
 import com.expenses.walletwatch.entity.UserExpenseStatistic;
 import com.expenses.walletwatch.exception.BadRequest;
+import com.expenses.walletwatch.repository.ExpenseRepository;
 import com.expenses.walletwatch.utils.GetUserData;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
@@ -17,14 +18,16 @@ import java.util.List;
 public class ExpenseService {
     private final ExpenseDao expenseDao;
     private final GetUserData getUserData;
+    private final ExpenseRepository expenseRepository;
 
-    public ExpenseService(ExpenseDao expenseDao, GetUserData getUserData) {
+    public ExpenseService(ExpenseDao expenseDao, GetUserData getUserData, ExpenseRepository expenseRepository) {
+        this.expenseRepository = expenseRepository;
         this.expenseDao = expenseDao;
         this.getUserData = getUserData;
     }
 
-    public List<Expense> getExpensesCategories() {
-        return expenseDao.getExpensesCategory();
+    public List<com.expenses.walletwatch.model.Expense> getExpensesCategories() {
+        return expenseRepository.findAll();
     }
 
     public Expense createUserExpense(ExpenseRequestDto dto) {

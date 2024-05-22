@@ -4,6 +4,7 @@ import com.expenses.walletwatch.dto.ExpenseRequestDto;
 import com.expenses.walletwatch.dto.ExpensesTransactionsRequestDto;
 import com.expenses.walletwatch.entity.Expense;
 import com.expenses.walletwatch.entity.UserExpenseStatistic;
+import com.expenses.walletwatch.repository.ExpenseRepository;
 import com.expenses.walletwatch.service.ExpenseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class ExpenseController {
 
     @GetMapping("expenses")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<Expense>> getExpenses() {
+    public ResponseEntity<List<com.expenses.walletwatch.model.Expense>> getExpenses() {
         return new ResponseEntity<>(expenseService.getExpensesCategories(), HttpStatus.OK);
     }
 
